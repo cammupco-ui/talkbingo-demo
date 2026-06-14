@@ -1,0 +1,258 @@
+/* ============================================================
+   TalkBingo Design System — Colors & Type
+   Source of truth: cammupco-ui/TalkBingo (Flutter) +
+                    cammupco-ui/TalkBingo-web (Next.js)
+   ============================================================ */
+
+/* ===== FONTS ============================================== */
+
+/* Nura — the DISPLAY face. Only used for wordmark "TALKBINGO",
+   big hero numbers, and titles on the landing page.
+   Never use Nura for body text. */
+@font-face {
+  font-family: 'Nura';
+  src: url('fonts/Nura_Light.ttf') format('truetype');
+  font-weight: 300;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Nura';
+  src: url('fonts/Nura_Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Nura';
+  src: url('fonts/Nura_Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Nura';
+  src: url('fonts/Nura_ExtraBold.ttf') format('truetype');
+  font-weight: 800;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Nura';
+  src: url('fonts/Nura_Black.ttf') format('truetype');
+  font-weight: 900;
+  font-display: swap;
+}
+
+/* EliceDigitalBaeum — the KOREAN body face. Rounded, friendly,
+   reads well at small sizes. Used for every Korean surface. */
+@font-face {
+  font-family: 'EliceDigitalBaeum';
+  src: url('fonts/EliceDigitalBaeum_Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'EliceDigitalBaeum';
+  src: url('fonts/EliceDigitalBaeum_Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-display: swap;
+}
+
+/* Alexandria — the ENGLISH body face (from Google Fonts).
+   Swap automatically based on `body.lang-en`. */
+@font-face {
+  font-family: 'Alexandria';
+  src: url('fonts/Alexandria-VariableFont_wght.ttf') format('truetype-variations');
+  font-weight: 100 900;
+  font-display: swap;
+}
+
+/* EliceDigitalCodingverH — monospaced. Used for invite codes,
+   version strings, anything code-like. */
+@font-face {
+  font-family: 'EliceDigitalCodingverH';
+  src: url('fonts/EliceDigitalCodingverH_Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'EliceDigitalCodingverH';
+  src: url('fonts/EliceDigitalCodingverH_Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-display: swap;
+}
+
+/* ===== TOKENS ============================================= */
+:root {
+  /* ——— Core brand (from app/lib/styles/app_colors.dart) ——— */
+
+  /* Host / Player A — PINK. Used for primary CTA, destructive,
+     score-positive. "BD0558" is the true brand pink. */
+  --host-primary: #BD0558;       /* Primary CTA background */
+  --host-secondary: #FF0077;     /* Center nav button, emphasis text */
+  --host-dark: #610C39;          /* Pressed / deep bg */
+  --host-text: #FFF4F6;          /* On-pink text */
+  --host-tint: #F4E7E8;          /* Soft pink bg tint (light surfaces) */
+
+  /* Guest / Player B — PURPLE. Used for secondary / guest role. */
+  --guest-primary: #430887;
+  --guest-secondary: #6B14EC;
+  --guest-dark: #2E0645;
+  --guest-text: #FDF9FF;
+  --guest-tint: #F0E7F4;
+
+  /* Solo (self-discovery COMBI QUIZ) — CORAL. */
+  --solo-primary: #E85D26;
+  --solo-secondary: #FB923C;
+  --solo-dark: #9A3412;
+  --solo-tint: #FFEDE5;
+
+  /* Web/landing secondary pink scale */
+  --web-pink-bright: #E91E63;
+  --web-pink-light: #F48FB1;
+  --web-pink-dark: #AD1457;
+  --web-accent: #FF6B9D;
+  --web-warm: #FF8A65;
+
+  /* ——— Nav-hub quadrant colors (from HomeMainButton.svg) ——— */
+  --hub-cyan: #00F3FF;           /* Top-left (콤비퀴즈 / Combi Quiz) */
+  --hub-lilac: #B487FD;          /* Bottom-right (새친구 찾기 / Find Friend) */
+  --hub-center: #FF0077;         /* Center (초대하기 / Invite — Host Secondary) */
+  --hub-black: #09040E;          /* Top-right dark quadrant (Preview) */
+  --hub-stroke: #6D616D;         /* Frame stroke */
+
+  /* ——— Backgrounds ——— */
+  --bg-dark: #0C0219;            /* The signature near-black purple. The
+                                    whole app lives on this color. */
+  --bg-dark-elev: #1A0A2E;       /* Elevated card on dark */
+  --bg-light: #FFF9FB;           /* Day surface */
+  --bg-input: #F5F5F5;           /* Inset input on light */
+
+  /* ——— Neutrals / text ——— */
+  --fg-on-dark: #FFFFFF;
+  --fg-on-dark-2: rgba(255,255,255,0.70);
+  --fg-on-dark-3: rgba(255,255,255,0.45);
+  --fg-dark: #0C0219;            /* Primary text on light */
+  --fg-dark-2: #555555;
+  --fg-dark-3: #94A3B8;
+  --border-light: #E2E8F0;
+  --border-soft: #F1F5F9;
+
+  /* ——— Semantic ——— */
+  --warning: #FF0000;
+  --info: #68CDFF;               /* "explanation" cyan */
+  --success: #22C55E;
+
+  /* ——— Shadow / elevation ——— */
+  --shadow-sm: 0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+  --shadow-md: 0 4px 16px rgba(0,0,0,.08);
+  --shadow-lg: 0 10px 40px rgba(0,0,0,.12);
+  --shadow-pink-glow: 0 4px 30px rgba(233,30,99,.25);
+  --shadow-hub-press: 0 6px 0 rgba(0,0,0,.35);  /* NEW: 3D button depth */
+
+  /* ——— Radii (from app_spacing.dart + nav-hub SVG) ——— */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-xl: 40px;             /* Center nav button corner */
+  --radius-hub: 60px;             /* Nav-hub outer frame */
+
+  /* ——— Spacing scale (from app_spacing.dart) ——— */
+  --space-xs: 8px;
+  --space-sm: 12px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --screen-padding: 20px;
+  --button-height: 56px;
+  --input-height: 48px;
+
+  /* ——— Motion ——— */
+  --ease-std: cubic-bezier(.25,.46,.45,.94);
+  --dur-quick: 150ms;
+  --dur-std: 300ms;
+  --btn-hover-scale: 1.05;
+  --btn-tap-scale: 0.95;
+}
+
+/* ===== SEMANTIC TYPE ====================================== */
+/* App defaults to Korean body face. Add `lang-en` to <body> to
+   swap to Alexandria. */
+body {
+  font-family: 'EliceDigitalBaeum', system-ui, sans-serif;
+  color: var(--fg-on-dark);
+  background: var(--bg-dark);
+  -webkit-font-smoothing: antialiased;
+  line-height: 1.6;
+}
+body.lang-en { font-family: 'Alexandria', system-ui, sans-serif; }
+
+/* Display — the TALKBINGO wordmark and giant hero numbers.
+   ALWAYS Nura. Letter-spacing 1.2 on wordmark. */
+.display, .wordmark {
+  font-family: 'Nura', system-ui, sans-serif;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+}
+
+/* Headings */
+h1, .h1 {
+  font-family: 'Nura', system-ui, sans-serif;
+  font-weight: 900;
+  font-size: clamp(36px, 6vw, 56px);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+h2, .h2 {
+  font-family: 'Nura', 'EliceDigitalBaeum', system-ui, sans-serif;
+  font-weight: 800;
+  font-size: clamp(24px, 4vw, 40px);
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+h3, .h3 {
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+}
+h4, .h4 {
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 1.35;
+}
+
+/* Body */
+p, .body {
+  font-size: 15px;
+  line-height: 1.6;
+}
+.body-lg { font-size: 18px; line-height: 1.6; }
+.body-sm { font-size: 13px; line-height: 1.5; }
+
+/* Labels / micro */
+.label {
+  font-size: 14px;
+  font-weight: 500;
+}
+.caption {
+  font-size: 12px;
+  color: var(--fg-on-dark-3);
+  letter-spacing: 0.02em;
+}
+.eyebrow {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--fg-on-dark-3);
+}
+
+/* Numeric / code */
+code, .mono {
+  font-family: 'EliceDigitalCodingverH', ui-monospace, monospace;
+}
+
+/* Buttons */
+.btn-label {
+  font-weight: 700;
+  font-size: 16px;
+  letter-spacing: -0.01em;
+}
