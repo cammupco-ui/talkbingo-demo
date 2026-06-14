@@ -4369,9 +4369,9 @@ function DemoApp() {
         timers.push(setTimeout(() => {
           window[bus] = { step: "reviewing", answer: botAnswer(type) };
           window.dispatchEvent(new CustomEvent(bus));
-        }, 1100));
-      }, 560));
-    }, 1e3));
+        }, 2e3));
+      }, 1100));
+    }, 1700));
     return () => {
       timers.forEach(clearTimeout);
     };
@@ -4390,7 +4390,7 @@ function DemoApp() {
         window.__tbChatId = (window.__tbChatId || 0) + 1;
         window.__tbChat = [...window.__tbChat || [], { id: "m" + window.__tbChatId, who: "guest", text: BOT_CHAT[Math.floor(Math.random() * BOT_CHAT.length)] }];
         window.dispatchEvent(new CustomEvent("tbchat"));
-      }, 900);
+      }, 1400);
     };
     window.addEventListener("tbchat", onChat);
     return () => window.removeEventListener("tbchat", onChat);
@@ -4441,7 +4441,7 @@ function DemoApp() {
     const tm = setTimeout(() => {
       handleResolveModal({ ownerRole: modalNow.ownerRole, key: modalNow.key });
       delete window[`__qm_${modalNow.seed}_${modalNow.type}`];
-    }, 1200);
+    }, 1800);
     return () => clearTimeout(tm);
   }, [modalStep, modalNow && modalNow.key]);
   let activeRole;
