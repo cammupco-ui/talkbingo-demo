@@ -4320,13 +4320,20 @@ function DemoApp() {
       const cta = document.getElementById("cta");
       const h = cta.querySelector("h2"), p = cta.querySelector("p");
       h.textContent = winner === "host" ? ko ? "\u{1F389} \uBE59\uACE0!" : "\u{1F389} Bingo!" : ko ? "\u{1F60F} \uCE5C\uAD6C \uBE59\uACE0!" : "\u{1F60F} Friend wins!";
-      p.innerHTML = ko ? "\uAC8C\uC784 \uCCB4\uD5D8\uC774 \uC544\uC26C\uC6E0\uB098\uC694?<br>\uB354 \uB2E4\uC591\uD55C \uC11C\uBE44\uC2A4\uAC00 \uC571\uC5D0 \uC900\uBE44\uB418\uC5B4 \uC788\uC2B5\uB2C8\uB2E4." : "Want more than a quick game?<br>The app has a lot more in store.";
-      cta.querySelector(".dl").textContent = ko ? "\uC571 \uB2E4\uC6B4\uB85C\uB4DC \u2193" : "Download the app \u2193";
+      const ctx = window.__TB_CTX;
+      p.innerHTML = ctx === "inapp" ? ko ? "\uC774\uC81C \uCE5C\uAD6C\uB97C \uCD08\uB300\uD574<br>\uC9C4\uC9DC\uB85C \uD50C\uB808\uC774\uD574\uBCF4\uC138\uC694!" : "Now invite a friend<br>and play for real!" : ko ? "\uAC8C\uC784 \uCCB4\uD5D8\uC774 \uC544\uC26C\uC6E0\uB098\uC694?<br>\uB354 \uB2E4\uC591\uD55C \uC11C\uBE44\uC2A4\uAC00 \uC571\uC5D0 \uC900\uBE44\uB418\uC5B4 \uC788\uC2B5\uB2C8\uB2E4." : "Want more than a quick game?<br>The app has a lot more in store.";
+      const dl = cta.querySelector(".dl"), back = cta.querySelector(".back");
       cta.querySelector(".again").textContent = ko ? "\uB2E4\uC2DC \uD574\uBCF4\uAE30" : "Play again";
-      const back = cta.querySelector(".back");
-      if (back) {
-        const company = window.__TB_CTX === "company";
-        back.style.display = company ? "inline-block" : "none";
+      if (ctx === "inapp") {
+        dl.style.display = "none";
+        back.style.display = "inline-block";
+        back.classList.add("primary");
+        back.textContent = ko ? "\uACC4\uC18D\uD558\uAE30" : "Continue";
+      } else {
+        dl.style.display = "inline-block";
+        dl.textContent = ko ? "\uC571 \uB2E4\uC6B4\uB85C\uB4DC \u2193" : "Download the app \u2193";
+        back.classList.remove("primary");
+        back.style.display = ctx === "company" ? "inline-block" : "none";
         back.textContent = ko ? "\u2190 \uB418\uB3CC\uC544 \uAC00\uAE30" : "\u2190 Back";
       }
       cta.classList.add("on");
