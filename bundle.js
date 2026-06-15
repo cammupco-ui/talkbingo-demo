@@ -4488,14 +4488,15 @@ function DemoApp() {
   } else {
     instr = ko ? "\uBE59\uACE0\uD560 \uCE78\uC744 \uC120\uD0DD\uD574\uC8FC\uC138\uC694" : "Pick a cell to play";
   }
-  const arrow = activeRole === "host" ? "\u2190" : activeRole === "guest" ? "\u2192" : "";
+  const arrow = activeRole === "host" ? "\u2192" : activeRole === "guest" ? "\u2190" : "";
+  const arrowSide = activeRole === "host" ? "right" : activeRole === "guest" ? "left" : "";
   useEffect(() => {
     if (!isMobile || !carRef.current) return;
     const idx = activeRole === "guest" ? 0 : 1;
     const card = carRef.current.children[idx];
     if (card) setTimeout(() => card.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" }), 60);
   }, [activeRole, isMobile]);
-  const hud = /* @__PURE__ */ React.createElement(React.Fragment, null, arrow && /* @__PURE__ */ React.createElement("div", { className: "arrow" }, arrow), /* @__PURE__ */ React.createElement("div", { className: "instr" }, instr), processing && /* @__PURE__ */ React.createElement("div", { className: "proc" }, /* @__PURE__ */ React.createElement("span", null), /* @__PURE__ */ React.createElement("span", null), /* @__PURE__ */ React.createElement("span", null)));
+  const hud = /* @__PURE__ */ React.createElement(React.Fragment, null, arrow && /* @__PURE__ */ React.createElement("div", { className: "arrow " + arrowSide }, arrow), /* @__PURE__ */ React.createElement("div", { className: "instr" }, instr), processing && /* @__PURE__ */ React.createElement("div", { className: "proc" }, /* @__PURE__ */ React.createElement("span", null), /* @__PURE__ */ React.createElement("span", null), /* @__PURE__ */ React.createElement("span", null)));
   if (isMobile) {
     const swipe = lang === "en" ? "swipe to see both boards" : "\uC88C\uC6B0\uB85C \uBC00\uC5B4 \uC591\uCABD \uD654\uBA74 \uBCF4\uAE30";
     return /* @__PURE__ */ React.createElement("div", { id: "stage", className: "m" }, /* @__PURE__ */ React.createElement("div", { className: "mTopHud " + (ko ? "ko" : "en") }, /* @__PURE__ */ React.createElement("div", { style: { position: "absolute", top: 0, right: 0 } }, /* @__PURE__ */ React.createElement(LangToggle, { lang, setLang })), hud, /* @__PURE__ */ React.createElement("div", { className: "swipeHint" }, /* @__PURE__ */ React.createElement("span", { className: "sw" }, "\u21C4"), " ", swipe)), /* @__PURE__ */ React.createElement("div", { className: "mCarousel", ref: carRef }, /* @__PURE__ */ React.createElement("div", { className: "mCard" + (activeRole && activeRole !== "guest" ? " inactive" : "") }, /* @__PURE__ */ React.createElement("div", { className: "bz" }, /* @__PURE__ */ React.createElement(VariantJelly, { role: "guest", ...common }))), /* @__PURE__ */ React.createElement("div", { className: "mCard" + (activeRole && activeRole !== "host" ? " inactive" : "") }, /* @__PURE__ */ React.createElement("div", { className: "bz" }, /* @__PURE__ */ React.createElement(VariantJelly, { role: "host", ...common })))));
