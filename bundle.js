@@ -4275,11 +4275,29 @@ function botQuestionType(r, c) {
   const s = (r * 7 + c * 3 + r * c) % 7;
   return s < 4 ? "T" : "B";
 }
-const BOT_TRUTH = ["\uC74C\u2026 \uADF8\uAC74 \uBE44\uBC00\uB85C \uD560\uB798 \u314E\u314E", "\uAE00\uC384, \uC544\uC9C1 \uC798 \uBAA8\uB974\uACA0\uC5B4", "\uB108\uB294 \uC5B4\uB5BB\uAC8C \uC0DD\uAC01\uD574?", "\uADF8\uB0E5 \uADF8\uB7F0 \uB0A0\uC774\uC5C8\uC5B4"];
-const BOT_BALANCE = ["\uC74C, \uB09C \uC774\uCABD!", "\uACE0\uBBFC\uB418\uC9C0\uB9CC \uC774\uAC78\uB85C", "\uC9C1\uAC10\uC801\uC73C\uB85C \uC774\uAC70", "\uBC18\uBC18\uC778\uB370 \uAD73\uC774 \uACE0\uB974\uBA74 \uC774\uAC70"];
-function botAnswer(type) {
-  const p = type === "B" ? BOT_BALANCE : BOT_TRUTH;
-  return p[Math.floor(Math.random() * p.length)];
+const BOT_TRUTH_FALLBACK = {
+  ko: ["\uC74C\u2026 \uADF8\uAC74 \uBE44\uBC00\uB85C \uD560\uB798 \u314E\u314E", "\uAE00\uC384, \uC544\uC9C1 \uC798 \uBAA8\uB974\uACA0\uC5B4", "\uB108\uB294 \uC5B4\uB5BB\uAC8C \uC0DD\uAC01\uD574?", "\uADF8\uB0E5 \uADF8\uB7F0 \uB0A0\uC774\uC5C8\uC5B4"],
+  en: ["Hmm, that's a secret for now", "Not really sure yet", "How about you?", "It was just one of those days"]
+};
+const BOT_BALANCE_FALLBACK = {
+  ko: ["\uC74C, \uB09C \uC774\uCABD!", "\uC9C1\uAC10\uC801\uC73C\uB85C \uC774\uAC70", "\uBC18\uBC18\uC778\uB370 \uAD73\uC774 \uACE0\uB974\uBA74 \uC774\uAC70"],
+  en: ["I'll go with this one", "Gut says this", "If I really have to pick, this"]
+};
+function botAnswer(type, seed, lang) {
+  const L = lang === "en" ? "en" : "ko";
+  if (type === "B") {
+    const pool2 = window.__TB_BALANCE && window.__TB_BALANCE[L] || [];
+    const q = pool2[seed % Math.max(1, pool2.length)];
+    if (q && q.a && q.b) return Math.random() < 0.5 ? q.a : q.b;
+    const fb2 = BOT_BALANCE_FALLBACK[L];
+    return fb2[Math.floor(Math.random() * fb2.length)];
+  }
+  const pool = window.__TB_TRUTH && window.__TB_TRUTH[L] || [];
+  const entry = pool[seed % Math.max(1, pool.length)];
+  const chips = entry && typeof entry === "object" && Array.isArray(entry.chips) ? entry.chips : null;
+  if (chips && chips.length) return chips[Math.floor(Math.random() * chips.length)];
+  const fb = BOT_TRUTH_FALLBACK[L];
+  return fb[Math.floor(Math.random() * fb.length)];
 }
 const BOT_CHAT = ["\uC624 \uC88B\uC740 \uC9C8\uBB38\uC774\uB2E4 \u314E\u314E", "\uC74C \uB098\uB3C4 \uBE44\uC2B7\uD574!", "\uADF8\uAC74 \uC0DD\uAC01 \uBABB \uD588\uB124", "\uB9DE\uC544 \uB9DE\uC544 \u{1F60A}", "\uB108\uB791 \uC598\uAE30\uD558\uB2C8\uAE4C \uC7AC\uBC0C\uB2E4", "\uC624 \uADF8\uB798? \uB354 \uB9D0\uD574\uBD10"];
 function DemoApp() {
@@ -4365,7 +4383,7 @@ function DemoApp() {
         setCells((c1) => ({ ...c1, [key]: { state: "confirmed", role: "guest" } }));
         setModal({ type, seed, ownerRole: "guest", key });
         timers.push(setTimeout(() => {
-          window[bus] = { step: "reviewing", answer: botAnswer(type) };
+          window[bus] = { step: "reviewing", answer: botAnswer(type, seed, t.lang) };
           window.dispatchEvent(new CustomEvent(bus));
         }, 4500));
       }, 2500));
