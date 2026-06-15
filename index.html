@@ -91,7 +91,7 @@
   @keyframes procDot{0%,100%{opacity:.3;transform:translateY(0)}50%{opacity:1;transform:translateY(-5px)}}
 
   /* ===== Mobile: top HUD + swipeable board cards ===== */
-  #stage.m{flex-direction:column;align-items:stretch;justify-content:flex-start;padding:8px 0 0;gap:4px;min-height:100dvh;min-height:100vh;}
+  #stage.m{position:relative;flex-direction:column;align-items:stretch;justify-content:flex-start;padding:8px 0 0;gap:4px;min-height:100dvh;min-height:100vh;}
   .mTopHud{position:relative;display:flex;flex-direction:column;align-items:center;gap:6px;padding:4px 44px 0;text-align:center;}
   .mTopHud .arrow{display:none;}
   .mTopHud .instr{font-size:20px;font-weight:800;color:#fff;line-height:1.35;letter-spacing:-0.01em;transition:opacity .25s ease;}
@@ -101,13 +101,21 @@
   .mTopHud .proc{display:flex;gap:7px;justify-content:center;}
   .mTopHud .proc span{width:9px;height:9px;border-radius:50%;background:#00F3FF;animation:procDot 1s ease-in-out infinite;}
   .mTopHud .proc span:nth-child(2){animation-delay:.16s} .mTopHud .proc span:nth-child(3){animation-delay:.32s}
-  /* Mobile swipe guide — dot = "you're on the right card", arrow = "swipe this way". */
-  .mGuide{height:22px;display:flex;align-items:center;justify-content:center;color:#00F3FF;line-height:1;
+  /* Mobile swipe guide — dot = "you're on the right card", arrow+label = "swipe this way". */
+  .mGuide{min-height:24px;display:flex;align-items:center;gap:6px;color:#00F3FF;line-height:1;
     text-shadow:0 0 12px rgba(0,243,255,.7);font-weight:900;}
-  .mGuide.here{font-size:9px;opacity:.55;color:rgba(255,255,255,.5);text-shadow:none;}
-  .mGuide.left, .mGuide.right{font-size:24px;animation:pulseGlow 1.4s ease-in-out infinite;}
-  .mGuide.left{align-self:flex-start;margin-left:8px;}
-  .mGuide.right{align-self:flex-end;margin-right:8px;}
+  .mGuide.here{justify-content:center;}
+  .mGuide.here .mDot{font-size:9px;opacity:.55;color:rgba(255,255,255,.5);text-shadow:none;font-weight:400;}
+  .mGuide.left{justify-content:flex-start;margin-left:12px;animation:pulseGlow 1.4s ease-in-out infinite;}
+  .mGuide.right{justify-content:flex-end;margin-right:12px;animation:pulseGlow 1.4s ease-in-out infinite;}
+  .mGuide .mArrow{font-size:30px;line-height:1;}
+  .mGuide .mLabel{font-size:13px;font-weight:700;letter-spacing:.01em;}
+  /* Cyan edge glow on the side the user should swipe toward — peripheral cue. */
+  .mEdgeGlow{position:absolute;top:0;bottom:0;width:4px;pointer-events:none;z-index:5;
+    background:linear-gradient(to bottom, transparent 0%, rgba(0,243,255,0.85) 50%, transparent 100%);
+    box-shadow:0 0 16px rgba(0,243,255,.7);animation:pulseGlow 1.4s ease-in-out infinite;}
+  .mEdgeGlow.left{left:0;}
+  .mEdgeGlow.right{right:0;}
   .mCarousel{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:14px;padding:0 7vw env(safe-area-inset-bottom,4px);
     flex:1;align-items:center;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
   .mCarousel::-webkit-scrollbar{display:none;}

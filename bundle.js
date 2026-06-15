@@ -4493,12 +4493,15 @@ function DemoApp() {
   }
   const arrow = activeRole === "host" ? "\u2192" : activeRole === "guest" ? "\u2190" : "";
   const arrowSide = activeRole === "host" ? "right" : activeRole === "guest" ? "left" : "";
+  const initScrolledRef = useRef(false);
   useEffect(() => {
-    if (!isMobile || !carRef.current) return;
-    const idx = activeRole === "guest" ? 0 : 1;
-    const card = carRef.current.children[idx];
-    if (card) setTimeout(() => card.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" }), 60);
-  }, [activeRole, isMobile]);
+    if (!isMobile || !carRef.current || initScrolledRef.current) return;
+    const hostCard = carRef.current.children[1];
+    if (hostCard) setTimeout(() => {
+      hostCard.scrollIntoView({ behavior: "auto", inline: "center", block: "nearest" });
+      initScrolledRef.current = true;
+    }, 60);
+  }, [isMobile]);
   const [viewingRole, setViewingRole] = useState("host");
   useEffect(() => {
     if (!isMobile) return;
@@ -4524,7 +4527,7 @@ function DemoApp() {
   ] : null;
   const hud = /* @__PURE__ */ React.createElement(React.Fragment, null, arrowChevs && /* @__PURE__ */ React.createElement("div", { className: "arrow " + arrowSide }, arrowChevs), /* @__PURE__ */ React.createElement("div", { className: "instr" }, instr), processing && /* @__PURE__ */ React.createElement("div", { className: "proc" }, /* @__PURE__ */ React.createElement("span", null), /* @__PURE__ */ React.createElement("span", null), /* @__PURE__ */ React.createElement("span", null)));
   if (isMobile) {
-    return /* @__PURE__ */ React.createElement("div", { id: "stage", className: "m" }, /* @__PURE__ */ React.createElement("div", { className: "mTopHud " + (ko ? "ko" : "en") }, /* @__PURE__ */ React.createElement("div", { style: { position: "absolute", top: 0, right: 0 } }, /* @__PURE__ */ React.createElement(LangToggle, { lang, setLang })), hud, mobileGuide && /* @__PURE__ */ React.createElement("div", { className: "mGuide " + mobileGuide }, mobileGuide === "here" ? "\u25CF" : mobileGuide === "left" ? "\u25C0" : "\u25B6")), /* @__PURE__ */ React.createElement("div", { className: "mCarousel", ref: carRef }, /* @__PURE__ */ React.createElement("div", { className: "mCard" + (activeRole && activeRole !== "guest" ? " inactive" : "") }, /* @__PURE__ */ React.createElement("div", { className: "bz" }, /* @__PURE__ */ React.createElement(VariantJelly, { role: "guest", ...common }))), /* @__PURE__ */ React.createElement("div", { className: "mCard" + (activeRole && activeRole !== "host" ? " inactive" : "") }, /* @__PURE__ */ React.createElement("div", { className: "bz" }, /* @__PURE__ */ React.createElement(VariantJelly, { role: "host", ...common })))));
+    return /* @__PURE__ */ React.createElement("div", { id: "stage", className: "m" }, /* @__PURE__ */ React.createElement("div", { className: "mTopHud " + (ko ? "ko" : "en") }, /* @__PURE__ */ React.createElement("div", { style: { position: "absolute", top: 0, right: 0 } }, /* @__PURE__ */ React.createElement(LangToggle, { lang, setLang })), hud, mobileGuide && /* @__PURE__ */ React.createElement("div", { className: "mGuide " + mobileGuide }, mobileGuide === "here" && /* @__PURE__ */ React.createElement("span", { className: "mDot" }, "\u25CF"), mobileGuide === "left" && /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("span", { className: "mArrow" }, "\u25C0"), /* @__PURE__ */ React.createElement("span", { className: "mLabel" }, ko ? "\uCE5C\uAD6C \uBCF4\uB4DC" : "Friend's board")), mobileGuide === "right" && /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("span", { className: "mLabel" }, ko ? "\uB0B4 \uBCF4\uB4DC" : "My board"), /* @__PURE__ */ React.createElement("span", { className: "mArrow" }, "\u25B6")))), mobileGuide === "left" && /* @__PURE__ */ React.createElement("div", { className: "mEdgeGlow left", "aria-hidden": "true" }), mobileGuide === "right" && /* @__PURE__ */ React.createElement("div", { className: "mEdgeGlow right", "aria-hidden": "true" }), /* @__PURE__ */ React.createElement("div", { className: "mCarousel", ref: carRef }, /* @__PURE__ */ React.createElement("div", { className: "mCard" + (activeRole && activeRole !== "guest" ? " inactive" : "") }, /* @__PURE__ */ React.createElement("div", { className: "bz" }, /* @__PURE__ */ React.createElement(VariantJelly, { role: "guest", ...common }))), /* @__PURE__ */ React.createElement("div", { className: "mCard" + (activeRole && activeRole !== "host" ? " inactive" : "") }, /* @__PURE__ */ React.createElement("div", { className: "bz" }, /* @__PURE__ */ React.createElement(VariantJelly, { role: "host", ...common })))));
   }
   return /* @__PURE__ */ React.createElement("div", { id: "stage", style: { minHeight: "100vh", padding: "24px 16px", boxSizing: "border-box", justifyContent: "center" } }, /* @__PURE__ */ React.createElement("div", { className: "boards" }, /* @__PURE__ */ React.createElement("div", { className: "boardwrap" + (dimGuest ? " dimmed" : "") }, /* @__PURE__ */ React.createElement("div", { className: "boardlabel", style: { color: "#B487FD" } }, "\uCE5C\uAD6C (\uBD07) \xB7 GUEST"), /* @__PURE__ */ React.createElement(VariantJelly, { role: "guest", ...common }), /* @__PURE__ */ React.createElement("div", { className: "dim" })), /* @__PURE__ */ React.createElement("div", { className: "centerHud" }, hud), /* @__PURE__ */ React.createElement("div", { className: "boardwrap" + (dimHost ? " dimmed" : "") }, /* @__PURE__ */ React.createElement("div", { className: "boardlabel", style: { color: "#FF5CA1" } }, "YOU \xB7 HOST"), /* @__PURE__ */ React.createElement(VariantJelly, { role: "host", ...common }), /* @__PURE__ */ React.createElement("div", { className: "dim" }))));
 }
