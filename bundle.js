@@ -4364,9 +4364,9 @@ function DemoApp() {
         timers.push(setTimeout(() => {
           window[bus] = { step: "reviewing", answer: botAnswer(type) };
           window.dispatchEvent(new CustomEvent(bus));
-        }, 2800));
-      }, 1300));
-    }, 2e3));
+        }, 4500));
+      }, 2500));
+    }, 3e3));
     return () => {
       timers.forEach(clearTimeout);
     };
@@ -4436,7 +4436,7 @@ function DemoApp() {
     const tm = setTimeout(() => {
       handleResolveModal({ ownerRole: modalNow.ownerRole, key: modalNow.key });
       delete window[`__qm_${modalNow.seed}_${modalNow.type}`];
-    }, 2800);
+    }, 3800);
     return () => clearTimeout(tm);
   }, [modalStep, modalNow && modalNow.key]);
   useEffect(() => {
@@ -4453,6 +4453,7 @@ function DemoApp() {
   const dimGuest = activeRole && activeRole !== "guest";
   let instr, processing = false;
   const ko = lang !== "en";
+  const botPicking = !modalNow && Object.values(cells).some((c) => c && c.state === "reserved" && c.role === "guest");
   if (phase === "won") {
     instr = ko ? "\u{1F389} \uBE59\uACE0!" : "\u{1F389} Bingo!";
   } else if (lastReveal) {
@@ -4478,6 +4479,9 @@ function DemoApp() {
         instr = modalNow.type === "B" ? ko ? "\uC120\uD0DD\uC9C0\uB97C \uACE8\uB77C\uC8FC\uC138\uC694" : "Choose your option" : ko ? "\uC9C8\uBB38\uC5D0 \uB2F5\uC744 \uC785\uB825\uD574\uC8FC\uC138\uC694" : "Type your answer to the question";
       }
     }
+  } else if (turn === "guest" && botPicking) {
+    instr = ko ? "\uCE5C\uAD6C\uAC00 \uCE78\uC744 \uACE0\uB974\uACE0 \uC788\uC5B4\uC694" : "Friend is picking a cell\u2026";
+    processing = true;
   } else if (turn === "guest") {
     instr = ko ? "\uC774\uBC88\uC5D4 \uCE5C\uAD6C\uC758 \uCC28\uB840\uC608\uC694" : "It's your friend's turn";
     processing = true;
@@ -4494,7 +4498,7 @@ function DemoApp() {
   const hud = /* @__PURE__ */ React.createElement(React.Fragment, null, arrow && /* @__PURE__ */ React.createElement("div", { className: "arrow" }, arrow), /* @__PURE__ */ React.createElement("div", { className: "instr" }, instr), processing && /* @__PURE__ */ React.createElement("div", { className: "proc" }, /* @__PURE__ */ React.createElement("span", null), /* @__PURE__ */ React.createElement("span", null), /* @__PURE__ */ React.createElement("span", null)));
   if (isMobile) {
     const swipe = lang === "en" ? "swipe to see both boards" : "\uC88C\uC6B0\uB85C \uBC00\uC5B4 \uC591\uCABD \uD654\uBA74 \uBCF4\uAE30";
-    return /* @__PURE__ */ React.createElement("div", { id: "stage", className: "m" }, /* @__PURE__ */ React.createElement("div", { className: "mTopHud" }, /* @__PURE__ */ React.createElement("div", { style: { position: "absolute", top: 0, right: 0 } }, /* @__PURE__ */ React.createElement(LangToggle, { lang, setLang })), hud, /* @__PURE__ */ React.createElement("div", { className: "swipeHint" }, /* @__PURE__ */ React.createElement("span", { className: "sw" }, "\u21C4"), " ", swipe)), /* @__PURE__ */ React.createElement("div", { className: "mCarousel", ref: carRef }, /* @__PURE__ */ React.createElement("div", { className: "mCard" + (activeRole && activeRole !== "guest" ? " inactive" : "") }, /* @__PURE__ */ React.createElement("div", { className: "bz" }, /* @__PURE__ */ React.createElement(VariantJelly, { role: "guest", ...common }))), /* @__PURE__ */ React.createElement("div", { className: "mCard" + (activeRole && activeRole !== "host" ? " inactive" : "") }, /* @__PURE__ */ React.createElement("div", { className: "bz" }, /* @__PURE__ */ React.createElement(VariantJelly, { role: "host", ...common })))));
+    return /* @__PURE__ */ React.createElement("div", { id: "stage", className: "m" }, /* @__PURE__ */ React.createElement("div", { className: "mTopHud " + (ko ? "ko" : "en") }, /* @__PURE__ */ React.createElement("div", { style: { position: "absolute", top: 0, right: 0 } }, /* @__PURE__ */ React.createElement(LangToggle, { lang, setLang })), hud, /* @__PURE__ */ React.createElement("div", { className: "swipeHint" }, /* @__PURE__ */ React.createElement("span", { className: "sw" }, "\u21C4"), " ", swipe)), /* @__PURE__ */ React.createElement("div", { className: "mCarousel", ref: carRef }, /* @__PURE__ */ React.createElement("div", { className: "mCard" + (activeRole && activeRole !== "guest" ? " inactive" : "") }, /* @__PURE__ */ React.createElement("div", { className: "bz" }, /* @__PURE__ */ React.createElement(VariantJelly, { role: "guest", ...common }))), /* @__PURE__ */ React.createElement("div", { className: "mCard" + (activeRole && activeRole !== "host" ? " inactive" : "") }, /* @__PURE__ */ React.createElement("div", { className: "bz" }, /* @__PURE__ */ React.createElement(VariantJelly, { role: "host", ...common })))));
   }
   return /* @__PURE__ */ React.createElement("div", { id: "stage", style: { minHeight: "100vh", padding: "24px 16px", boxSizing: "border-box", justifyContent: "center" } }, /* @__PURE__ */ React.createElement("div", { className: "boards" }, /* @__PURE__ */ React.createElement("div", { className: "boardwrap" + (dimGuest ? " dimmed" : "") }, /* @__PURE__ */ React.createElement("div", { className: "boardlabel", style: { color: "#B487FD" } }, "\uCE5C\uAD6C (\uBD07) \xB7 GUEST"), /* @__PURE__ */ React.createElement(VariantJelly, { role: "guest", ...common }), /* @__PURE__ */ React.createElement("div", { className: "dim" })), /* @__PURE__ */ React.createElement("div", { className: "centerHud" }, hud), /* @__PURE__ */ React.createElement("div", { className: "boardwrap" + (dimHost ? " dimmed" : "") }, /* @__PURE__ */ React.createElement("div", { className: "boardlabel", style: { color: "#FF5CA1" } }, "YOU \xB7 HOST"), /* @__PURE__ */ React.createElement(VariantJelly, { role: "host", ...common }), /* @__PURE__ */ React.createElement("div", { className: "dim" }))));
 }
