@@ -85,7 +85,7 @@
 
   /* ===== Mobile: top HUD + swipeable board cards ===== */
   #stage.m{flex-direction:column;align-items:stretch;justify-content:flex-start;padding:14px 0 24px;gap:10px;min-height:100vh;}
-  .mTopHud{display:flex;flex-direction:column;align-items:center;gap:8px;padding:6px 16px 0;text-align:center;}
+  .mTopHud{position:relative;display:flex;flex-direction:column;align-items:center;gap:8px;padding:6px 44px 0;text-align:center;}
   .mTopHud .arrow{display:none;}
   .mTopHud .instr{font-size:16px;font-weight:700;color:#fff;line-height:1.4;font-family:'EliceDigitalBaeum',sans-serif;}
   .mTopHud .proc{display:flex;gap:7px;justify-content:center;}
@@ -204,7 +204,23 @@
   // Embed context: 'app' (talkbingo.app, download is the end) | 'company' (cammuplabs.com, allow going back).
   // From ?ctx= query (prototype) or a pre-set window.__TB_CTX (embed script can set it from data-ctx).
   window.__TB_CTX = (new URLSearchParams(location.search).get('ctx')) || window.__TB_CTX || 'app';
-  function tbDemoBack(){ if (typeof window.__TB_ON_BACK === 'function') window.__TB_ON_BACK(); else history.back(); }
+  function tbDemoBack(){
+    var ctx = window.__TB_CTX || 'app';
+    // inapp: deep-link back into the TalkBingo app (OS dismisses the in-app browser
+    // and brings the app to the foreground / home screen).
+    if (ctx === 'inapp') {
+      try { window.close(); } catch(_) {}
+      window.location.href = 'talkbingo://home';
+      return;
+    }
+    // company: go to cammuplabs.com (제품 소개)
+    if (ctx === 'company') {
+      window.location.href = 'https://cammuplabs.com/products.html';
+      return;
+    }
+    if (typeof window.__TB_ON_BACK === 'function') window.__TB_ON_BACK();
+    else history.back();
+  }
 
   // Desktop: zoom the two-board row to fit. Mobile: zoom each board to its ~86vw card.
   let TB_CONTENT_W = 0;
