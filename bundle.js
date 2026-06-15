@@ -1336,9 +1336,10 @@ function QuestionModal({ type, role, ownerRole, cellKey, onClose, onResolve, see
   const t = I18N[lang] || I18N.ko;
   const truthList = TRUTH_QUESTIONS[lang] || TRUTH_QUESTIONS.ko;
   const balList = BALANCE_QUESTIONS[lang] || BALANCE_QUESTIONS.ko;
-  const truthQ = truthList[seed % truthList.length];
+  const truthEntry = truthList[seed % truthList.length];
+  const truthQ = typeof truthEntry === "string" ? truthEntry : truthEntry && truthEntry.q || "";
+  const truthChips = truthEntry && typeof truthEntry === "object" && Array.isArray(truthEntry.chips) && truthEntry.chips.length ? truthEntry.chips : TRUTH_CHIPS[lang] || TRUTH_CHIPS.ko;
   const balQ = balList[seed % balList.length];
-  const truthChips = TRUTH_CHIPS[lang] || TRUTH_CHIPS.ko;
   const busKey = `__qm_${seed}_${type}`;
   const [step, setStep] = React.useState(() => {
     var _a;
@@ -2643,7 +2644,8 @@ function ChatPanel({ role, lang, modal, history = [], gameOver = false, onExit }
     const seed = modal.seed || 0;
     const truthList = TRUTH_QUESTIONS[lang] || TRUTH_QUESTIONS.ko;
     const balList = BALANCE_QUESTIONS[lang] || BALANCE_QUESTIONS.ko;
-    const question = isTruth ? truthList[seed % truthList.length] : (balList[seed % balList.length] || {}).q || "";
+    const truthEntry = truthList[seed % truthList.length];
+    const question = isTruth ? typeof truthEntry === "string" ? truthEntry : truthEntry && truthEntry.q || "" : (balList[seed % balList.length] || {}).q || "";
     const typeLabel = isTruth ? lang === "en" ? "TRUTH" : "\uC9C4\uC2E4\uAC8C\uC784" : lang === "en" ? "THIS OR THAT" : "\uBC38\uB7F0\uC2A4";
     const busKey = "__qm_" + seed + "_" + modal.type;
     const isReviewing = ((_a = window[busKey]) == null ? void 0 : _a.step) === "reviewing";
@@ -2725,7 +2727,8 @@ function ChatPanel({ role, lang, modal, history = [], gameOver = false, onExit }
     const seed = item.seed || 0;
     const truthList = TRUTH_QUESTIONS[lang] || TRUTH_QUESTIONS.ko;
     const balList = BALANCE_QUESTIONS[lang] || BALANCE_QUESTIONS.ko;
-    const question = isTruth ? truthList[seed % truthList.length] : (balList[seed % balList.length] || {}).q || "";
+    const truthEntry = truthList[seed % truthList.length];
+    const question = isTruth ? typeof truthEntry === "string" ? truthEntry : truthEntry && truthEntry.q || "" : (balList[seed % balList.length] || {}).q || "";
     const approved = item.verdict === "approve";
     return /* @__PURE__ */ React.createElement("div", { key: item.id, style: {
       borderRadius: 12,
