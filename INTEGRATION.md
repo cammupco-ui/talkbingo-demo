@@ -1,51 +1,36 @@
-# TalkBingo 데모 — 3개 surface 연결 가이드
+# TalkBingo 데모 — surface 연결 가이드
 
-데모 호스팅: `https://cammupco-ui.github.io/talkbingo-demo/`  (배포 후 확정)
-컨텍스트 파라미터 `?ctx=` : `app`(기본, CTA=앱 다운로드) · `company`(CTA에 "← 되돌아 가기" 추가) · `inapp`(추후, 앱 내부용)
+데모 호스팅: `https://talkbingo.app/` (이 repo가 GitHub Pages + custom domain으로 직접 서빙)
+컨텍스트 파라미터 `?ctx=` :
+- `app` (기본) — CTA = "앱 다운로드 ↓"
+- `company` — CTA에 "← 되돌아 가기" 추가 (→ `https://cammuplabs.com/products.html`)
+- `inapp` — 다운로드 숨김, primary CTA "계속하기" (→ `talkbingo://home` 딥링크로 앱 홈 복귀)
 
 ---
 
-## 1) talkbingo.app — 히어로 iframe  (Next.js 소스에서)
-랜딩 첫 화면을 데모로. Next.js **소스**의 히어로 컴포넌트에 추가(빌드 산출물 직접수정 금지):
-```jsx
-<section style={{height:'100vh'}}>
-  <iframe src="https://cammupco-ui.github.io/talkbingo-demo/"
-          style={{width:'100%',height:'100%',border:0}} allow="clipboard-write" />
-</section>
-```
-(또는 기존 "PLAY NOW" 버튼을 위 URL 새 탭 링크로만 연결 — 더 간단)
+## 1) talkbingo.app — 도메인 직결
+이 repo의 CNAME이 `talkbingo.app`. Google 검색·SNS 공유 등 외부 유입이 곧바로 데모를 만남.
+기본 ctx=`app` 으로 동작 → 우승 시 앱 다운로드 CTA.
 
-## 2) cammuplabs.com — 회사 소개 섹션 iframe
+## 2) cammuplabs.com — "Try on Web" 버튼 (products.html)
 ```html
-<iframe src="https://cammupco-ui.github.io/talkbingo-demo/?ctx=company"
-        style="width:100%;height:100vh;border:0"></iframe>
+<a href="https://talkbingo.app/?ctx=company" target="_blank" rel="noopener" class="btn-ghost">
+  <span class="en">Try on Web →</span>
+  <span class="kr">웹에서 시작하기 →</span>
+</a>
 ```
 
-## 3) 앱(Flutter) 홈 — "How to play" 버튼 → 데모 열기
-pubspec에 `url_launcher` 필요(없으면 추가). 홈 화면 적절한 위치에:
+## 3) 앱(Flutter) 홈 — "게임 체험하기" 버튼 (home_screen.dart)
 ```dart
 import 'package:url_launcher/url_launcher.dart';
-// import 'package:talkbingo_app/styles/app_colors.dart';
-// import 'package:talkbingo_app/styles/app_text_styles.dart';
 
-GestureDetector(
-  onTap: () => launchUrl(
-    Uri.parse('https://cammupco-ui.github.io/talkbingo-demo/?ctx=inapp'),
-    mode: LaunchMode.inAppBrowserView, // 또는 externalApplication
-  ),
-  child: Container(
-    height: 48,
-    padding: const EdgeInsets.symmetric(horizontal: 20),
-    alignment: Alignment.center,
-    decoration: BoxDecoration(
-      gradient: const LinearGradient(colors: [AppColors.host, AppColors.hostGradientEnd]),
-      borderRadius: BorderRadius.circular(40),
-    ),
-    child: Text('How to play', style: AppTextStyles.buttonEn),
-  ),
-)
+onTap: () => launchUrl(
+  Uri.parse('https://talkbingo.app/?ctx=inapp'),
+  mode: LaunchMode.inAppBrowserView,
+),
 ```
-> 인앱에서는 CTA "앱 다운로드"가 어색 → `?ctx=inapp`로 열고, 데모 CTA를 "닫기/계속하기"로 바꾸는 inapp 모드 추가 권장(소규모).
+"계속하기" 클릭 시 데모가 `talkbingo://home` 딥링크 호출 → OS가 인앱 브라우저 닫고 앱 홈 복귀.
 
 ---
-모든 surface가 같은 데모 한 소스를 가리킴 → 데모 수정 시 이 repo만 갱신(build.sh → dist 복사).
+모든 surface가 같은 한 소스를 가리킴 → 데모 수정 시 이 repo만 갱신.
+빌드: 메인 repo `web_demo_proto/game/` → `./build.sh` → `cp -R dist/. ~/Desktop/talkbingo-demo/` → commit & push.
