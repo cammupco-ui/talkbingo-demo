@@ -71,13 +71,17 @@
   .boardlabel{text-align:center;font-size:12px;font-weight:700;letter-spacing:.04em;margin-bottom:8px;
     color:rgba(255,255,255,.55);font-family:'EliceDigitalCodingverH',monospace;}
   /* center HUD (between boards on desktop) */
-  .centerHud{flex:0 0 clamp(150px,18vw,210px);display:flex;flex-direction:column;align-items:center;
+  .centerHud{flex:0 0 clamp(180px,20vw,240px);display:flex;flex-direction:column;align-items:center;
     justify-content:center;gap:16px;text-align:center;align-self:center;position:relative;}
-  .centerHud .arrow{font-size:30px;color:#00F3FF;line-height:1;opacity:.85;
-    text-shadow:0 0 16px rgba(0,243,255,.6);animation:pulseGlow 1.6s ease-in-out infinite;
-    position:absolute;top:50%;transform:translateY(-50%);}
-  .centerHud .arrow.left{left:0;}
-  .centerHud .arrow.right{right:0;}
+  .centerHud .arrow{color:#00F3FF;line-height:1;
+    text-shadow:0 0 18px rgba(0,243,255,.85), 0 0 36px rgba(0,243,255,.4);
+    animation:pulseGlow 1.6s ease-in-out infinite;
+    position:absolute;top:50%;transform:translateY(-50%);
+    display:flex;align-items:center;gap:0;font-weight:900;}
+  .centerHud .arrow span{display:inline-block;}
+  .centerHud .arrow.left{left:-44px;}
+  .centerHud .arrow.right{right:-44px;}
+  .centerHud .instr{word-break:keep-all;}
   .centerHud .instr{font-size:clamp(15px,1.6vw,18px);font-weight:700;color:#fff;line-height:1.55;
     font-family:'EliceDigitalBaeum',sans-serif;}
   .centerHud .proc{display:flex;gap:7px;justify-content:center;}
