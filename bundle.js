@@ -4298,6 +4298,8 @@ function DemoApp() {
     guest: window.countBingoLines ? window.countBingoLines(cells, "guest") : 0
   }), [cells]);
   const [phase, setPhase] = useState("play");
+  const [lastReveal, setLastReveal] = useState(null);
+  const [reviewLong, setReviewLong] = useState(false);
   const wonRef = useRef(false);
   useEffect(() => {
     if (wonRef.current) return;
@@ -4306,25 +4308,25 @@ function DemoApp() {
     wonRef.current = true;
     setPhase("won");
     setTimeout(() => {
-      const ko = t.lang !== "en";
+      const ko2 = t.lang !== "en";
       const cta = document.getElementById("cta");
       const h = cta.querySelector("h2"), p = cta.querySelector("p");
-      h.textContent = winner === "host" ? ko ? "\u{1F389} \uBE59\uACE0!" : "\u{1F389} Bingo!" : ko ? "\u{1F60F} \uCE5C\uAD6C \uBE59\uACE0!" : "\u{1F60F} Friend wins!";
+      h.textContent = winner === "host" ? ko2 ? "\u{1F389} \uBE59\uACE0!" : "\u{1F389} Bingo!" : ko2 ? "\u{1F60F} \uCE5C\uAD6C \uBE59\uACE0!" : "\u{1F60F} Friend wins!";
       const ctx = window.__TB_CTX;
-      p.innerHTML = ctx === "inapp" ? ko ? "\uC774\uC81C \uCE5C\uAD6C\uB97C \uCD08\uB300\uD574<br>\uC9C4\uC9DC\uB85C \uD50C\uB808\uC774\uD574\uBCF4\uC138\uC694!" : "Now invite a friend<br>and play for real!" : ko ? "\uAC8C\uC784 \uCCB4\uD5D8\uC774 \uC544\uC26C\uC6E0\uB098\uC694?<br>\uB354 \uB2E4\uC591\uD55C \uC11C\uBE44\uC2A4\uAC00 \uC571\uC5D0 \uC900\uBE44\uB418\uC5B4 \uC788\uC2B5\uB2C8\uB2E4." : "Want more than a quick game?<br>The app has a lot more in store.";
+      p.innerHTML = ctx === "inapp" ? ko2 ? "\uC774\uC81C \uCE5C\uAD6C\uB97C \uCD08\uB300\uD574<br>\uC9C4\uC9DC\uB85C \uD50C\uB808\uC774\uD574\uBCF4\uC138\uC694!" : "Now invite a friend<br>and play for real!" : ko2 ? "\uAC8C\uC784 \uCCB4\uD5D8\uC774 \uC544\uC26C\uC6E0\uB098\uC694?<br>\uB354 \uB2E4\uC591\uD55C \uC11C\uBE44\uC2A4\uAC00 \uC571\uC5D0 \uC900\uBE44\uB418\uC5B4 \uC788\uC2B5\uB2C8\uB2E4." : "Want more than a quick game?<br>The app has a lot more in store.";
       const dl = cta.querySelector(".dl"), back = cta.querySelector(".back");
-      cta.querySelector(".again").textContent = ko ? "\uB2E4\uC2DC \uD574\uBCF4\uAE30" : "Play again";
+      cta.querySelector(".again").textContent = ko2 ? "\uB2E4\uC2DC \uD574\uBCF4\uAE30" : "Play again";
       if (ctx === "inapp") {
         dl.style.display = "none";
         back.style.display = "inline-block";
         back.classList.add("primary");
-        back.textContent = ko ? "\uACC4\uC18D\uD558\uAE30" : "Continue";
+        back.textContent = ko2 ? "\uACC4\uC18D\uD558\uAE30" : "Continue";
       } else {
         dl.style.display = "inline-block";
-        dl.textContent = ko ? "\uC571 \uB2E4\uC6B4\uB85C\uB4DC \u2193" : "Download the app \u2193";
+        dl.textContent = ko2 ? "\uC571 \uB2E4\uC6B4\uB85C\uB4DC \u2193" : "Download the app \u2193";
         back.classList.remove("primary");
         back.style.display = ctx === "company" ? "inline-block" : "none";
-        back.textContent = ko ? "\u2190 \uB418\uB3CC\uC544 \uAC00\uAE30" : "\u2190 Back";
+        back.textContent = ko2 ? "\u2190 \uB418\uB3CC\uC544 \uAC00\uAE30" : "\u2190 Back";
       }
       cta.classList.add("on");
     }, 1400);
@@ -4333,6 +4335,9 @@ function DemoApp() {
     const resolveQ = window.__bingoBoard_resolveQuestion;
     if (resolveQ && key) resolveQ(key, ownerRole, verdict, ownerRole === "host" ? "Y" : "M");
     if (verdict === "approve") setScores((s) => ({ ...s, [ownerRole]: { ...s[ownerRole], gp: s[ownerRole].gp + 1 } }));
+    const reveal = { ownerRole, approved: verdict === "approve" };
+    setLastReveal(reveal);
+    setTimeout(() => setLastReveal((prev) => prev === reveal ? null : prev), 2500);
     setTurn(ownerRole === "host" ? "guest" : "host");
     botBusy.current = false;
     setModal(null);
@@ -4359,9 +4364,9 @@ function DemoApp() {
         timers.push(setTimeout(() => {
           window[bus] = { step: "reviewing", answer: botAnswer(type) };
           window.dispatchEvent(new CustomEvent(bus));
-        }, 2e3));
-      }, 1100));
-    }, 1700));
+        }, 2800));
+      }, 1300));
+    }, 2e3));
     return () => {
       timers.forEach(clearTimeout);
     };
@@ -4431,7 +4436,13 @@ function DemoApp() {
     const tm = setTimeout(() => {
       handleResolveModal({ ownerRole: modalNow.ownerRole, key: modalNow.key });
       delete window[`__qm_${modalNow.seed}_${modalNow.type}`];
-    }, 1800);
+    }, 2800);
+    return () => clearTimeout(tm);
+  }, [modalStep, modalNow && modalNow.key]);
+  useEffect(() => {
+    setReviewLong(false);
+    if (!modalNow || modalStep !== "reviewing" || modalNow.ownerRole !== "host") return;
+    const tm = setTimeout(() => setReviewLong(true), 1600);
     return () => clearTimeout(tm);
   }, [modalStep, modalNow && modalNow.key]);
   let activeRole;
@@ -4441,28 +4452,37 @@ function DemoApp() {
   const dimHost = activeRole && activeRole !== "host";
   const dimGuest = activeRole && activeRole !== "guest";
   let instr, processing = false;
+  const ko = lang !== "en";
   if (phase === "won") {
-    instr = lang === "en" ? "Bingo! \u{1F389}" : "\uBE59\uACE0! \u{1F389}";
+    instr = ko ? "\u{1F389} \uBE59\uACE0!" : "\u{1F389} Bingo!";
+  } else if (lastReveal) {
+    if (lastReveal.ownerRole === "host") {
+      instr = lastReveal.approved ? ko ? "\u{1F389} \uCE5C\uAD6C\uAC00 \uACF5\uAC10\uD588\uC5B4\uC694 \u2014 \uBE59\uACE0 \uC140 \uD68D\uB4DD!" : "\u{1F389} Friend approved \u2014 cell won!" : ko ? "\uCE5C\uAD6C\uAC00 \uBE44\uACF5\uAC10\uD588\uC5B4\uC694 \u2014 \uC140\uC774 \uC7A0\uACBC\uC5B4\uC694" : "Friend rejected \u2014 cell locked";
+    } else {
+      instr = lastReveal.approved ? ko ? "\uCE5C\uAD6C\uAC00 \uBE59\uACE0 \uC140\uC744 \uD68D\uB4DD\uD588\uC5B4\uC694" : "Friend won a cell" : ko ? "\uCE5C\uAD6C\uC758 \uC140\uC774 \uC7A0\uACBC\uC5B4\uC694" : "Friend's cell locked";
+    }
   } else if (modalNow) {
     const friend = modalNow.ownerRole === "guest";
     if (friend) {
       if (modalStep === "reviewing") {
-        instr = lang === "en" ? "React to friend's answer" : "\uCE5C\uAD6C \uB2F5\uC5D0 \uACF5\uAC10/\uBE44\uACF5\uAC10\uC744 \uACE8\uB77C\uC8FC\uC138\uC694";
+        instr = ko ? "\uACF5\uAC10/\uBE44\uACF5\uAC10 \uC911\uC5D0 \uD558\uB098\uB97C \uC120\uD0DD\uD574\uC8FC\uC138\uC694" : "Choose: approve or pass on friend's answer";
       } else {
-        instr = lang === "en" ? "Friend is answering\u2026" : "\uCE5C\uAD6C\uAC00 \uB2F5\uD558\uB294 \uC911\u2026";
+        instr = ko ? "\uCE5C\uAD6C\uAC00 \uC9C8\uBB38\uC744 \uBCF4\uB294 \uC911\uC774\uC5D0\uC694" : "Friend is reading the question\u2026";
         processing = true;
       }
     } else {
       if (modalStep === "reviewing") {
-        instr = lang === "en" ? "Waiting for your friend\u2026" : "\uCE5C\uAD6C\uC758 \uBC18\uC751\uC744 \uAE30\uB2E4\uB824\uC694\u2026";
+        instr = reviewLong ? ko ? "\uCE5C\uAD6C\uC758 \uC758\uACAC\uC744 \uAE30\uB2E4\uB9AC\uB294 \uC911\u2026" : "Waiting for friend's reaction\u2026" : ko ? "\uCE5C\uAD6C\uAC00 \uB2F9\uC2E0\uC758 \uB2F5\uC744 \uBCF4\uACE0 \uC788\uC5B4\uC694" : "Friend is reading your answer";
         processing = true;
-      } else instr = modalNow.type === "B" ? lang === "en" ? "Win your friend over" : "\uCE5C\uAD6C\uC5D0\uAC8C \uACF5\uAC10\uC744 \uC5BB\uC5B4\uB0B4\uC138\uC694" : lang === "en" ? "Explain your answer" : "\uC774\uC720\uB97C \uC124\uBA85\uD574 \uC8FC\uC138\uC694";
+      } else {
+        instr = modalNow.type === "B" ? ko ? "\uC120\uD0DD\uC9C0\uB97C \uACE8\uB77C\uC8FC\uC138\uC694" : "Choose your option" : ko ? "\uC9C8\uBB38\uC5D0 \uB2F5\uC744 \uC785\uB825\uD574\uC8FC\uC138\uC694" : "Type your answer to the question";
+      }
     }
   } else if (turn === "guest") {
-    instr = lang === "en" ? "Friend is picking a cell\u2026" : "\uCE5C\uAD6C\uAC00 \uCE78\uC744 \uACE0\uB974\uB294 \uC911\u2026";
+    instr = ko ? "\uC774\uBC88\uC5D4 \uCE5C\uAD6C\uC758 \uCC28\uB840\uC608\uC694" : "It's your friend's turn";
     processing = true;
   } else {
-    instr = lang === "en" ? "Pick a cell" : "\uCE78\uC744 \uC120\uD0DD\uD558\uC138\uC694";
+    instr = ko ? "\uBE59\uACE0\uD560 \uCE78\uC744 \uC120\uD0DD\uD574\uC8FC\uC138\uC694" : "Pick a cell to play";
   }
   const arrow = activeRole === "host" ? "\u2190" : activeRole === "guest" ? "\u2192" : "";
   useEffect(() => {

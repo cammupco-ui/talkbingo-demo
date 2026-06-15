@@ -84,17 +84,17 @@
   @keyframes procDot{0%,100%{opacity:.3;transform:translateY(0)}50%{opacity:1;transform:translateY(-5px)}}
 
   /* ===== Mobile: top HUD + swipeable board cards ===== */
-  #stage.m{flex-direction:column;align-items:stretch;justify-content:flex-start;padding:14px 0 24px;gap:10px;min-height:100vh;}
-  .mTopHud{position:relative;display:flex;flex-direction:column;align-items:center;gap:8px;padding:6px 44px 0;text-align:center;}
+  #stage.m{flex-direction:column;align-items:stretch;justify-content:flex-start;padding:8px 0 0;gap:6px;min-height:100vh;}
+  .mTopHud{position:relative;display:flex;flex-direction:column;align-items:center;gap:6px;padding:4px 44px 0;text-align:center;}
   .mTopHud .arrow{display:none;}
-  .mTopHud .instr{font-size:16px;font-weight:700;color:#fff;line-height:1.4;font-family:'EliceDigitalBaeum',sans-serif;}
+  .mTopHud .instr{font-size:20px;font-weight:800;color:#fff;line-height:1.35;font-family:'EliceDigitalBaeum',sans-serif;letter-spacing:-0.01em;transition:opacity .25s ease;}
   .mTopHud .proc{display:flex;gap:7px;justify-content:center;}
   .mTopHud .proc span{width:9px;height:9px;border-radius:50%;background:#00F3FF;animation:procDot 1s ease-in-out infinite;}
   .mTopHud .proc span:nth-child(2){animation-delay:.16s} .mTopHud .proc span:nth-child(3){animation-delay:.32s}
   .swipeHint{display:flex;align-items:center;gap:6px;font-size:12px;color:#A89DB8;}
   .swipeHint .sw{display:inline-block;animation:swipeNudge 1.6s ease-in-out infinite;font-size:14px;}
-  .mCarousel{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:14px;padding:4px 7vw 6px;
-    -webkit-overflow-scrolling:touch;scrollbar-width:none;}
+  .mCarousel{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:14px;padding:0 7vw env(safe-area-inset-bottom,4px);
+    margin-top:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
   .mCarousel::-webkit-scrollbar{display:none;}
   .mCard{flex:0 0 86vw;scroll-snap-align:center;display:flex;flex-direction:column;align-items:center;
     transition:opacity .35s;}
@@ -227,7 +227,7 @@
     // Fit each board card by BOTH width (86vw / 390) and height (viewport − chrome / 844 frame),
     // so the whole board shows without the bottom getting cut off.
     var wFit = (window.innerWidth * 0.86 - 6) / 390;
-    var hFit = (window.innerHeight - 200) / 844;
+    var hFit = (window.innerHeight - 120) / 844;
     root.style.setProperty('--cardz', String(Math.max(0.4, Math.min(1, wFit, hFit))));
     if (TB_CONTENT_W) root.style.setProperty('--z', String(Math.max(0.2, Math.min(1, (window.innerWidth - 8) / TB_CONTENT_W))));
   }
