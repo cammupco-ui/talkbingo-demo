@@ -508,7 +508,7 @@ function TopBar({ role, phase, currentTurn, attacksLeft, scores, bingoLines, lan
     bingo: "BINGO",
     turnSuffix: " \uCC28\uB840"
   };
-  return /* @__PURE__ */ React.createElement("div", { style: { display: "flex", flexDirection: "column", alignItems: "stretch", gap: 10, paddingTop: 10, paddingBottom: 6, width: "100%", boxSizing: "border-box", overflow: "hidden", opacity: gameOver ? 0.28 : 1, pointerEvents: gameOver ? "none" : "auto", transition: "opacity 400ms ease" } }, /* @__PURE__ */ React.createElement("div", { style: {
+  return /* @__PURE__ */ React.createElement("div", { style: { display: "flex", flexDirection: "column", alignItems: "stretch", gap: 4, paddingTop: 4, paddingBottom: 2, width: "100%", boxSizing: "border-box", overflow: "hidden", opacity: gameOver ? 0.28 : 1, pointerEvents: gameOver ? "none" : "auto", transition: "opacity 400ms ease" } }, /* @__PURE__ */ React.createElement("div", { style: {
     display: "flex",
     alignItems: "center",
     justifyContent: "space-between",
@@ -527,7 +527,7 @@ function TopBar({ role, phase, currentTurn, attacksLeft, scores, bingoLines, lan
   } }, /* @__PURE__ */ React.createElement("div", { style: {
     display: "inline-flex",
     alignItems: "center",
-    padding: "10px 20px",
+    padding: "6px 18px",
     background: isMyTurn ? turnPal.gradient : "rgba(255,255,255,0.06)",
     border: isMyTurn ? "none" : "1px solid rgba(255,255,255,0.1)",
     borderRadius: 999,
@@ -1107,7 +1107,7 @@ function MessageInput({ role, panel, lang }) {
     window.dispatchEvent(new CustomEvent("tbchat"));
     setDraft("");
   };
-  return /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 10, padding: "5px 18px 5px", position: "relative" } }, /* @__PURE__ */ React.createElement("div", { style: { flex: 1, position: "relative" } }, /* @__PURE__ */ React.createElement(
+  return /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 10, padding: "2px 18px 2px", position: "relative" } }, /* @__PURE__ */ React.createElement("div", { style: { flex: 1, position: "relative" } }, /* @__PURE__ */ React.createElement(
     "input",
     {
       value: draft,
@@ -3086,7 +3086,7 @@ function SwipeFrame({ title, children, tweaks, setTweak, bursts, phase, role, mo
         }
       }
     )))
-  ), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", justifyContent: "center", alignItems: "center", gap: 6, paddingBottom: 2, position: "relative", zIndex: 60 } }, [0, 1, ...roundPhase === "gameOver" ? [2] : []].map((i) => {
+  ), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", justifyContent: "center", alignItems: "center", gap: 6, paddingBottom: 0, position: "relative", zIndex: 60 } }, [0, 1, ...roundPhase === "gameOver" ? [2] : []].map((i) => {
     const active = panel === i;
     const dotColor = i === 2 ? "#F2C857" : ROLE[role].primary;
     return /* @__PURE__ */ React.createElement("div", { key: i, style: {
@@ -3097,7 +3097,7 @@ function SwipeFrame({ title, children, tweaks, setTweak, bursts, phase, role, mo
       boxShadow: active ? `0 0 8px ${dotColor}88` : "none",
       transition: "all 280ms cubic-bezier(.25,.46,.45,.94)"
     } });
-  })), /* @__PURE__ */ React.createElement("div", { ref: dockRef, "data-ticker-dock": "true", style: { position: "relative", zIndex: 60, background: "linear-gradient(180deg, transparent 0%, rgba(12,2,25,0.85) 18%, #0C0219 100%)" } }, /* @__PURE__ */ React.createElement(MessageInput, { role, panel, lang }), !tweaks.keyboardOn && /* @__PURE__ */ React.createElement(BannerAd, { role, lang }), !tweaks.keyboardOn && /* @__PURE__ */ React.createElement("div", { style: { display: "flex", justifyContent: "center", padding: "4px 0 6px" } }, /* @__PURE__ */ React.createElement("div", { style: { width: 134, height: 5, borderRadius: 3, background: "rgba(255,255,255,0.5)" } })), tweaks.keyboardOn && /* @__PURE__ */ React.createElement(FauxKeyboard, null), tweaks.keyboardOn && /* @__PURE__ */ React.createElement(BannerAd, { role, lang })), modal && panel === 0 && /* @__PURE__ */ React.createElement(
+  })), /* @__PURE__ */ React.createElement("div", { ref: dockRef, "data-ticker-dock": "true", style: { position: "relative", zIndex: 60, background: "linear-gradient(180deg, transparent 0%, rgba(12,2,25,0.85) 18%, #0C0219 100%)" } }, /* @__PURE__ */ React.createElement(MessageInput, { role, panel, lang }), !tweaks.keyboardOn && /* @__PURE__ */ React.createElement(BannerAd, { role, lang }), !tweaks.keyboardOn && /* @__PURE__ */ React.createElement("div", { style: { display: "flex", justifyContent: "center", padding: "0 0 2px" } }, /* @__PURE__ */ React.createElement("div", { style: { width: 134, height: 5, borderRadius: 3, background: "rgba(255,255,255,0.5)" } })), tweaks.keyboardOn && /* @__PURE__ */ React.createElement(FauxKeyboard, null), tweaks.keyboardOn && /* @__PURE__ */ React.createElement(BannerAd, { role, lang })), modal && panel === 0 && /* @__PURE__ */ React.createElement(
     QuestionModal,
     {
       type: modal.type,
