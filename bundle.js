@@ -4499,6 +4499,20 @@ function DemoApp() {
     const card = carRef.current.children[idx];
     if (card) setTimeout(() => card.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" }), 60);
   }, [activeRole, isMobile]);
+  const [viewingRole, setViewingRole] = useState("host");
+  useEffect(() => {
+    if (!isMobile) return;
+    const car = carRef.current;
+    if (!car) return;
+    const onScroll = () => {
+      const idx = Math.round(car.scrollLeft / Math.max(1, car.clientWidth));
+      setViewingRole(idx === 0 ? "guest" : "host");
+    };
+    onScroll();
+    car.addEventListener("scroll", onScroll, { passive: true });
+    return () => car.removeEventListener("scroll", onScroll);
+  }, [isMobile]);
+  const mobileGuide = !activeRole ? null : activeRole === viewingRole ? "here" : activeRole === "guest" ? "left" : "right";
   const arrowChevs = arrowSide === "right" ? [
     /* @__PURE__ */ React.createElement("span", { key: "t", style: { fontSize: "22px", opacity: 0.2 } }, "\u203A"),
     /* @__PURE__ */ React.createElement("span", { key: "m", style: { fontSize: "32px", opacity: 0.5, marginLeft: "-6px" } }, "\u203A"),
@@ -4510,8 +4524,7 @@ function DemoApp() {
   ] : null;
   const hud = /* @__PURE__ */ React.createElement(React.Fragment, null, arrowChevs && /* @__PURE__ */ React.createElement("div", { className: "arrow " + arrowSide }, arrowChevs), /* @__PURE__ */ React.createElement("div", { className: "instr" }, instr), processing && /* @__PURE__ */ React.createElement("div", { className: "proc" }, /* @__PURE__ */ React.createElement("span", null), /* @__PURE__ */ React.createElement("span", null), /* @__PURE__ */ React.createElement("span", null)));
   if (isMobile) {
-    const swipe = lang === "en" ? "swipe to see both boards" : "\uC88C\uC6B0\uB85C \uBC00\uC5B4 \uC591\uCABD \uD654\uBA74 \uBCF4\uAE30";
-    return /* @__PURE__ */ React.createElement("div", { id: "stage", className: "m" }, /* @__PURE__ */ React.createElement("div", { className: "mTopHud " + (ko ? "ko" : "en") }, /* @__PURE__ */ React.createElement("div", { style: { position: "absolute", top: 0, right: 0 } }, /* @__PURE__ */ React.createElement(LangToggle, { lang, setLang })), hud, /* @__PURE__ */ React.createElement("div", { className: "swipeHint" }, /* @__PURE__ */ React.createElement("span", { className: "sw" }, "\u21C4"), " ", swipe)), /* @__PURE__ */ React.createElement("div", { className: "mCarousel", ref: carRef }, /* @__PURE__ */ React.createElement("div", { className: "mCard" + (activeRole && activeRole !== "guest" ? " inactive" : "") }, /* @__PURE__ */ React.createElement("div", { className: "bz" }, /* @__PURE__ */ React.createElement(VariantJelly, { role: "guest", ...common }))), /* @__PURE__ */ React.createElement("div", { className: "mCard" + (activeRole && activeRole !== "host" ? " inactive" : "") }, /* @__PURE__ */ React.createElement("div", { className: "bz" }, /* @__PURE__ */ React.createElement(VariantJelly, { role: "host", ...common })))));
+    return /* @__PURE__ */ React.createElement("div", { id: "stage", className: "m" }, /* @__PURE__ */ React.createElement("div", { className: "mTopHud " + (ko ? "ko" : "en") }, /* @__PURE__ */ React.createElement("div", { style: { position: "absolute", top: 0, right: 0 } }, /* @__PURE__ */ React.createElement(LangToggle, { lang, setLang })), hud, mobileGuide && /* @__PURE__ */ React.createElement("div", { className: "mGuide " + mobileGuide }, mobileGuide === "here" ? "\u25CF" : mobileGuide === "left" ? "\u25C0" : "\u25B6")), /* @__PURE__ */ React.createElement("div", { className: "mCarousel", ref: carRef }, /* @__PURE__ */ React.createElement("div", { className: "mCard" + (activeRole && activeRole !== "guest" ? " inactive" : "") }, /* @__PURE__ */ React.createElement("div", { className: "bz" }, /* @__PURE__ */ React.createElement(VariantJelly, { role: "guest", ...common }))), /* @__PURE__ */ React.createElement("div", { className: "mCard" + (activeRole && activeRole !== "host" ? " inactive" : "") }, /* @__PURE__ */ React.createElement("div", { className: "bz" }, /* @__PURE__ */ React.createElement(VariantJelly, { role: "host", ...common })))));
   }
   return /* @__PURE__ */ React.createElement("div", { id: "stage", style: { minHeight: "100vh", padding: "24px 16px", boxSizing: "border-box", justifyContent: "center" } }, /* @__PURE__ */ React.createElement("div", { className: "boards" }, /* @__PURE__ */ React.createElement("div", { className: "boardwrap" + (dimGuest ? " dimmed" : "") }, /* @__PURE__ */ React.createElement("div", { className: "boardlabel", style: { color: "#B487FD" } }, "\uCE5C\uAD6C (\uBD07) \xB7 GUEST"), /* @__PURE__ */ React.createElement(VariantJelly, { role: "guest", ...common }), /* @__PURE__ */ React.createElement("div", { className: "dim" })), /* @__PURE__ */ React.createElement("div", { className: "centerHud" }, hud), /* @__PURE__ */ React.createElement("div", { className: "boardwrap" + (dimHost ? " dimmed" : "") }, /* @__PURE__ */ React.createElement("div", { className: "boardlabel", style: { color: "#FF5CA1" } }, "YOU \xB7 HOST"), /* @__PURE__ */ React.createElement(VariantJelly, { role: "host", ...common }), /* @__PURE__ */ React.createElement("div", { className: "dim" }))));
 }
