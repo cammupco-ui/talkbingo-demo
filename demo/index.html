@@ -1,6 +1,10 @@
 <!doctype html>
 <html lang="ko">
 <head>
+<!-- This file lives under /demo/ but loads all assets (bundle.js, fonts, etc.)
+     from root. <base> makes every relative URL on the page resolve from / so
+     we can copy the root index.html here verbatim without rewriting paths. -->
+<base href="/" />
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>TalkBingo — 진실·밸런스로 채우는 대화형 빙고 데모</title>
