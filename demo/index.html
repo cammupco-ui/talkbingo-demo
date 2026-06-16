@@ -1,0 +1,321 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>TalkBingo — 진실·밸런스로 채우는 대화형 빙고 데모</title>
+<meta name="description" content="빙고는 핑계일 뿐 — 모든 답에서 진짜 대화가 시작돼요. 봇과 한 판 해보고, 진짜 친구와는 앱에서. 맞춤 질문·음성→텍스트·미니게임·다국어·커뮤니티·게임 기록." />
+<meta property="og:title" content="TALKBINGO — 대화형 빙고" />
+<meta property="og:description" content="빙고는 핑계일 뿐 — 모든 답에서 진짜 대화가 시작돼요. 지금 바로 체험해보세요." />
+<meta property="og:type" content="website" />
+<meta name="theme-color" content="#0C0219" />
+<link rel="stylesheet" href="colors_and_type.css" />
+<style>
+  html, body { margin:0; padding:0; background:#060109; color:#fff;
+    font-family:'EliceDigitalBaeum', system-ui, sans-serif; min-height:100%; overflow-x:hidden; }
+  /* reuse the handoff keyframes (subset needed by VariantJelly) */
+  @keyframes bokehFloat{0%{transform:translate(0,0) scale(1)}100%{transform:translate(12px,-18px) scale(1.08)}}
+  @keyframes jellyBreathe{0%,100%{transform:translateY(-3px) scale(1,1)}50%{transform:translateY(-6px) scale(1.02,0.98)}}
+  @keyframes jellyBounce{0%{transform:translateY(0) scale(1.15,0.72)}20%{transform:translateY(-6px) scale(0.92,1.18)}40%{transform:translateY(-2px) scale(1.06,0.95)}60%{transform:translateY(0) scale(0.98,1.03)}80%{transform:translateY(0) scale(1.01,0.99)}100%{transform:translateY(0) scale(1,1)}}
+  @keyframes floatDrift{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-6px) rotate(0.4deg)}}
+  @keyframes pulseGlow{0%,100%{opacity:.5;transform:scale(1)}50%{opacity:.9;transform:scale(1.08)}}
+  @keyframes popWobble{0%,100%{transform:translateY(0)}50%{transform:translateY(-2.5px)}}
+  @keyframes particleFly{0%{transform:translate(0,0) scale(1);opacity:1}100%{transform:translate(var(--dx),var(--dy)) scale(0.2);opacity:0}}
+  @keyframes ringExpand{0%{width:4px;height:4px;opacity:1;border-width:3px}100%{width:120px;height:120px;margin-left:-60px;margin-top:-60px;opacity:0;border-width:1px}}
+  @keyframes rippleOut{0%{width:6px;height:6px;margin-left:-3px;margin-top:-3px;opacity:.9}100%{width:140px;height:140px;margin-left:-70px;margin-top:-70px;opacity:0}}
+  @keyframes jellyShimmer{0%,100%{filter:brightness(1)}50%{filter:brightness(1.12)}}
+  @keyframes dashSpin{to{transform:rotate(360deg)}}
+  @keyframes reservedBlink{0%,100%{opacity:.55;transform:scale(1)}50%{opacity:1;transform:scale(1.15)}}
+  @keyframes popReserved{0%,100%{transform:translateY(-2px)}50%{transform:translateY(-5px)}}
+  @keyframes swipeNudge{0%,100%{transform:translateX(0)}50%{transform:translateX(-6px)}}
+  @keyframes captionPulse{0%{transform:scale(1);opacity:.85}70%{transform:scale(1.9);opacity:0}100%{transform:scale(1.9);opacity:0}}
+  @keyframes tickerBob{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-6px) scale(1.02)}}
+  @keyframes tickerAura{0%,100%{opacity:.5;transform:scale(1)}50%{opacity:.95;transform:scale(1.18)}}
+  @keyframes celebGlow{0%{opacity:0;transform:scale(0.8)}40%{opacity:1;transform:scale(1.1)}100%{opacity:0;transform:scale(1.3)}}
+  @keyframes celebFadeOut{0%{opacity:1}100%{opacity:0}}
+  @keyframes bingoPop{0%{opacity:0;transform:translateX(-50%) scale(0.3) rotate(-8deg)}60%{transform:translateX(-50%) scale(1.15) rotate(2deg);opacity:1}80%{transform:translateX(-50%) scale(0.97) rotate(-1deg)}100%{transform:translateX(-50%) scale(1) rotate(0deg);opacity:1}}
+  @keyframes confettiFall{0%{transform:translateY(0) rotate(0deg) translateX(0);opacity:1}80%{opacity:1}100%{transform:translateY(900px) rotate(720deg) translateX(var(--swing));opacity:0}}
+  @keyframes starPop{0%{opacity:0;transform:scale(0)}60%{opacity:1;transform:scale(1.3)}100%{opacity:1;transform:scale(1)}}
+  @keyframes lineCellPop{0%{transform:scale(0.7);opacity:0}60%{transform:scale(1.12);opacity:1}100%{transform:scale(1);opacity:1}}
+  @keyframes barScaleY{0%,40%,100%{transform:scaleY(0.05)}20%{transform:scaleY(1)}}
+  @keyframes modalFade{from{opacity:0}to{opacity:1}}
+  @keyframes modalRise{from{opacity:0;transform:translateY(20px) scale(0.94)}to{opacity:1;transform:translateY(0) scale(1)}}
+  @keyframes wonSparkle{0%,100%{opacity:0;transform:scale(0.6)}20%{opacity:1;transform:scale(1.1)}40%{opacity:0;transform:scale(0.7)}}
+  @keyframes lockBreathe{0%,100%{transform:scale(1);opacity:.78}50%{transform:scale(1.06);opacity:1}}
+  @keyframes crackPulse{0%,100%{opacity:.12}50%{opacity:.32}}
+  @keyframes attackVignette{0%,100%{opacity:.65}50%{opacity:1}}
+  @keyframes swordGlow{0%,100%{opacity:.55;transform:scale(1)}50%{opacity:1;transform:scale(1.15)}}
+  @keyframes swordShake{0%{transform:rotate(-12deg) translateY(0)}100%{transform:rotate(8deg) translateY(-2px)}}
+  @keyframes attackBannerPulse{0%,100%{box-shadow:0 0 0 0 rgba(255,80,90,0.4)}50%{box-shadow:0 0 0 8px rgba(255,80,90,0)}}
+  @keyframes attackHintPop{0%{opacity:0;transform:translateX(-50%) translateY(6px) scale(0.85)}60%{opacity:1;transform:translateX(-50%) translateY(-2px) scale(1.04)}100%{opacity:1;transform:translateX(-50%) translateY(0) scale(1)}}
+  @keyframes hintToastInOut{0%{opacity:0;transform:translateX(-50%) translateY(8px) scale(0.85)}15%{opacity:1;transform:translateX(-50%) translateY(-2px) scale(1.04)}25%{opacity:1;transform:translateX(-50%) translateY(0) scale(1)}75%{opacity:1;transform:translateX(-50%) translateY(-1px) scale(1)}100%{opacity:0;transform:translateX(-50%) translateY(-10px) scale(0.95)}}
+  @keyframes hintPopCentered{0%{opacity:0;transform:translateY(6px) scale(0.85)}60%{opacity:1;transform:translateY(-2px) scale(1.04)}100%{opacity:1;transform:translateY(0) scale(1)}}
+  @keyframes hintToastInOutCentered{0%{opacity:0;transform:translateY(8px) scale(0.85)}15%{opacity:1;transform:translateY(-2px) scale(1.04)}25%{opacity:1;transform:translateY(0) scale(1)}75%{opacity:1;transform:translateY(-1px) scale(1)}100%{opacity:0;transform:translateY(-10px) scale(0.95)}}
+  @keyframes turnPillPulse{0%,100%{transform:scale(1);filter:brightness(1)}50%{transform:scale(1.04);filter:brightness(1.15)}}
+  @keyframes crownRock{0%,100%{transform:rotate(-4deg)}50%{transform:rotate(4deg)}}
+  @keyframes heroPopIn{0%{opacity:0;transform:scale(0.75)}60%{opacity:1;transform:scale(1.06)}80%{transform:scale(0.97)}100%{opacity:1;transform:scale(1)}}
+  @keyframes waitRipple{0%{transform:scale(0.4);opacity:.9}100%{transform:scale(2.4);opacity:0}}
+  @keyframes waitPulse{0%,100%{transform:scale(1);opacity:.65}50%{transform:scale(1.35);opacity:1}}
+  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+  @keyframes modalPop{0%{opacity:0;transform:scale(0.88)}100%{opacity:1;transform:scale(1)}}
+
+  /* ── demo chrome ── */
+  #stage{display:flex;flex-direction:column;align-items:center;}
+  .boards{display:flex;gap:clamp(24px,4vw,56px);justify-content:center;align-items:center;flex-wrap:nowrap;
+    zoom:var(--z,1);}
+  .boardwrap{position:relative;transition:transform .45s ease, filter .45s ease;}
+  .boardwrap.dimmed{filter:grayscale(.35) brightness(.62);transform:scale(.965);}
+  .boardwrap .dim{position:absolute;inset:0;border-radius:28px;background:rgba(6,1,15,.55);
+    opacity:0;transition:opacity .45s ease;pointer-events:none;z-index:5;}
+  .boardwrap.dimmed .dim{opacity:1;}
+  .boardlabel{text-align:center;font-size:12px;font-weight:700;letter-spacing:.04em;margin-bottom:8px;
+    color:rgba(255,255,255,.55);font-family:'EliceDigitalCodingverH',monospace;}
+  /* center HUD (between boards on desktop) */
+  .centerHud{flex:0 0 clamp(180px,20vw,240px);display:flex;flex-direction:column;align-items:center;
+    justify-content:center;gap:16px;text-align:center;align-self:center;position:relative;}
+  .centerHud .arrow{color:#00F3FF;line-height:1;
+    text-shadow:0 0 18px rgba(0,243,255,.85), 0 0 36px rgba(0,243,255,.4);
+    animation:pulseGlow 1.6s ease-in-out infinite;
+    position:absolute;top:50%;transform:translateY(-50%);
+    display:flex;align-items:center;gap:0;font-weight:900;}
+  .centerHud .arrow span{display:inline-block;}
+  .centerHud .arrow.left{left:-44px;}
+  .centerHud .arrow.right{right:-44px;}
+  .centerHud .instr{word-break:keep-all;}
+  .centerHud .instr{font-size:clamp(15px,1.6vw,18px);font-weight:700;color:#fff;line-height:1.55;
+    font-family:'EliceDigitalBaeum',sans-serif;}
+  .centerHud .proc{display:flex;gap:7px;justify-content:center;}
+  .centerHud .proc span{width:9px;height:9px;border-radius:50%;background:#00F3FF;animation:procDot 1s ease-in-out infinite;}
+  .centerHud .proc span:nth-child(2){animation-delay:.16s}
+  .centerHud .proc span:nth-child(3){animation-delay:.32s}
+  @keyframes procDot{0%,100%{opacity:.3;transform:translateY(0)}50%{opacity:1;transform:translateY(-5px)}}
+
+  /* ===== Mobile: top HUD + swipeable board cards ===== */
+  /* IMPORTANT: order matters. last declaration wins, so 100dvh (visible
+     viewport, excludes URL bar/toolbar) must come AFTER the 100vh fallback. */
+  #stage.m{position:relative;flex-direction:column;align-items:stretch;justify-content:flex-start;padding:8px 0 0;gap:4px;
+    height:100vh;height:100dvh;max-height:100dvh;}
+  .mTopHud{position:relative;display:flex;flex-direction:column;align-items:center;gap:6px;padding:4px 44px 0;text-align:center;}
+  .mTopHud .arrow{display:none;}
+  .mTopHud .instr{font-size:20px;font-weight:800;color:#fff;line-height:1.35;letter-spacing:-0.01em;transition:opacity .25s ease;}
+  /* Language-aware fonts per design system: Alexandria for EN, EliceDigitalBaeum for KO */
+  .mTopHud.ko .instr, .mTopHud.ko .swipeHint{font-family:'EliceDigitalBaeum',system-ui,sans-serif;}
+  .mTopHud.en .instr, .mTopHud.en .swipeHint{font-family:'Alexandria',system-ui,sans-serif;}
+  .mTopHud .proc{display:flex;gap:7px;justify-content:center;}
+  .mTopHud .proc span{width:9px;height:9px;border-radius:50%;background:#00F3FF;animation:procDot 1s ease-in-out infinite;}
+  .mTopHud .proc span:nth-child(2){animation-delay:.16s} .mTopHud .proc span:nth-child(3){animation-delay:.32s}
+  /* Mobile swipe guide — dot = "you're on the right card", arrow+label = "swipe this way". */
+  .mGuide{min-height:24px;display:flex;align-items:center;gap:6px;color:#00F3FF;line-height:1;
+    text-shadow:0 0 12px rgba(0,243,255,.7);font-weight:900;}
+  .mGuide.here{justify-content:center;}
+  .mGuide.here .mDot{font-size:9px;opacity:.55;color:rgba(255,255,255,.5);text-shadow:none;font-weight:400;}
+  .mGuide.left{justify-content:flex-start;margin-left:12px;animation:pulseGlow 1.4s ease-in-out infinite;}
+  .mGuide.right{justify-content:flex-end;margin-right:12px;animation:pulseGlow 1.4s ease-in-out infinite;}
+  .mGuide .mArrow{font-size:30px;line-height:1;}
+  .mGuide .mLabel{font-size:13px;font-weight:700;letter-spacing:.01em;}
+  /* Cyan edge glow on the side the user should swipe toward — peripheral cue. */
+  .mEdgeGlow{position:absolute;top:0;bottom:0;width:4px;pointer-events:none;z-index:5;
+    background:linear-gradient(to bottom, transparent 0%, rgba(0,243,255,0.85) 50%, transparent 100%);
+    box-shadow:0 0 16px rgba(0,243,255,.7);animation:pulseGlow 1.4s ease-in-out infinite;}
+  .mEdgeGlow.left{left:0;}
+  .mEdgeGlow.right{right:0;}
+  .mCarousel{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:14px;padding:0 7vw env(safe-area-inset-bottom,4px);
+    flex:1;align-items:center;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+  .mCarousel::-webkit-scrollbar{display:none;}
+  .mCard{flex:0 0 86vw;scroll-snap-align:center;display:flex;flex-direction:column;align-items:center;
+    transition:opacity .35s;}
+  .mCard.inactive{opacity:.5;}
+  .mCard .bz{zoom:var(--cardz,0.82);}
+  .mDots{display:flex;justify-content:center;gap:8px;margin-top:2px;}
+  .mDots span{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.25);transition:.3s;}
+  .mDots span.on{background:#FF0077;width:22px;border-radius:4px;}
+  /* intro overlay */
+  #intro{position:fixed;inset:0;z-index:9998;background:radial-gradient(120% 90% at 50% 38%, #16052b 0%, #060109 70%);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;transition:opacity .55s;
+    padding:clamp(40px,7vh,80px) 20px;box-sizing:border-box;overflow-y:auto;}
+  #intro.hide{opacity:0;pointer-events:none;}
+  #intro .langToggle{position:absolute;top:18px;right:20px;display:flex;align-items:center;gap:5px;
+    font-family:'EliceDigitalCodingverH',monospace;font-size:12px;z-index:2;}
+  #intro .langToggle button{background:none;border:0;color:#6B6080;cursor:pointer;font:inherit;padding:4px 5px;}
+  #intro .langToggle button.on{color:#fff;font-weight:700;}
+  #intro .langToggle span{color:#3a3350;}
+  @keyframes introMark{0%{opacity:0;transform:scale(0.6) rotate(-12deg)}60%{opacity:1;transform:scale(1.08) rotate(3deg)}100%{opacity:1;transform:scale(1) rotate(0)}}
+  @keyframes introUp{0%{opacity:0;transform:translateY(14px)}100%{opacity:1;transform:translateY(0)}}
+  #intro .logo{width:72px;height:72px;animation:introMark .7s cubic-bezier(.34,1.56,.64,1) both;
+    filter:drop-shadow(0 0 22px rgba(255,0,119,.55));}
+  #intro h1{font-family:'Nura',sans-serif;font-weight:900;font-size:clamp(56px,14vw,76px);
+    letter-spacing:.04em;margin:0;line-height:1;animation:introUp .55s ease .35s both;}
+  #intro p.slogan{color:#FF5CA1;font-weight:700;font-size:clamp(13px,3.6vw,16px);line-height:1.5;text-align:center;
+    letter-spacing:.01em;margin:0;animation:introUp .55s ease .5s both;}
+  #intro .features{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;
+    width:min(560px,92vw);margin-top:28px;animation:introUp .55s ease .9s both;}
+  #intro .features span{display:flex;align-items:center;justify-content:center;text-align:center;
+    font-size:12px;color:#A89DB8;padding:14px 12px;border-radius:24px;
+    background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);white-space:nowrap;}
+  @media (max-width:560px){
+    #intro{gap:10px;padding:32px 18px;}
+    #intro .logo{width:54px;height:54px;}
+    #intro h1{font-size:clamp(40px,12vw,58px);}
+    #intro p.slogan{font-size:13px;}
+    #intro .introBtn{margin-top:clamp(40px,7vh,84px);padding:14px 30px;font-size:15px;}
+    #intro .features{grid-template-columns:repeat(2,1fr);gap:8px;margin-top:20px;}
+    #intro .features span{padding:11px 10px;font-size:11.5px;}
+  }
+  #intro .introBtn{border:0;cursor:pointer;color:#fff;font-weight:800;font-size:clamp(15px,4.2vw,17px);
+    margin-top:clamp(80px,15vh,150px);font-family:'EliceDigitalBaeum',sans-serif;
+    padding:clamp(15px,4vw,18px) clamp(30px,9vw,42px);border-radius:40px;white-space:nowrap;
+    background:linear-gradient(135deg,#BD0558,#FF0077);box-shadow:0 12px 30px rgba(189,5,88,.55);
+    animation:introUp .55s ease .72s both, turnPillPulse 2.4s ease-in-out 1.6s infinite;}
+  /* CTA overlay */
+  #cta{position:fixed;inset:0;z-index:9999;display:none;align-items:center;justify-content:center;
+    background:rgba(6,1,15,.78);backdrop-filter:blur(6px);}
+  #cta.on{display:flex;}
+  #cta .card{width:min(360px,90vw);text-align:center;background:#1A0A2E;border:1px solid rgba(255,0,119,.4);
+    border-radius:24px;padding:30px 24px;box-shadow:0 24px 60px rgba(0,0,0,.6);animation:modalRise .35s ease both;}
+  #cta h2{font-family:'Nura',sans-serif;font-size:24px;margin:0 0 6px;color:#FF0077;}
+  #cta p{color:#A89DB8;font-size:14px;line-height:1.55;margin:0 0 20px;}
+  #cta .dl{display:inline-block;border:0;cursor:pointer;color:#fff;font-weight:800;font-size:16px;
+    padding:16px 32px;border-radius:40px;background:linear-gradient(135deg,#BD0558,#FF0077);
+    box-shadow:0 10px 26px rgba(189,5,88,.55);}
+  #cta .back{display:none;margin:14px auto 0;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.18);
+    color:#fff;font-weight:700;font-size:14px;padding:13px 26px;border-radius:40px;cursor:pointer;
+    font-family:'EliceDigitalBaeum',sans-serif;}
+  #cta .back.primary{background:linear-gradient(135deg,#BD0558,#FF0077);border:0;font-weight:800;font-size:16px;
+    padding:16px 32px;box-shadow:0 10px 26px rgba(189,5,88,.55);}
+  #cta .again{display:block;margin:14px auto 0;background:none;border:0;color:#6B6080;font-size:12px;cursor:pointer;}
+  .note{position:fixed;bottom:8px;left:0;width:100%;text-align:center;font-size:10px;color:#6B6080;z-index:1;}
+  /* Both boards stay side by side at every width; --z (set by JS) zooms the
+     whole row down to fit narrow screens. If it gets too small to tap, we
+     branch to a swipe layout (see below). */
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<div id="intro">
+  <div class="langToggle" id="langToggle">
+    <button data-lang="ko">KO</button><span>/</span><button data-lang="en">EN</button>
+  </div>
+  <img class="logo" src="assets/logo_vector.svg" alt="" onerror="this.style.display='none'"/>
+  <h1>TALKBINGO</h1>
+  <p class="slogan" id="introSlogan"></p>
+  <button class="introBtn" id="introBtn" onclick="enterDemo()"></button>
+  <div class="features" id="introFeatures"></div>
+</div>
+
+<div id="cta"><div class="card">
+  <h2>🎉 빙고!</h2>
+  <p>게임 체험이 아쉬웠나요?<br/>더 다양한 서비스가 앱에 준비되어 있습니다.</p>
+  <button class="back" onclick="tbDemoBack()">← 되돌아 가기</button>
+  <button class="dl" onclick="window.open('https://apps.apple.com/app/id6759347728','_blank')">앱 다운로드 ↓</button>
+  <button class="again" onclick="location.reload()">다시 해보기</button>
+</div></div>
+
+<script>
+  // ── Intro i18n (KO default) ──
+  const INTRO_I18N = {
+    ko: {
+      slogan: '빙고는 핑계일 뿐 —<br>모든 답에서 진짜 대화가 시작돼요',
+      button: '체험하러 가기 ▶',
+      features: ['맞춤 질문','음성 → 텍스트','미니게임','다국어','커뮤니티','게임 기록']
+    },
+    en: {
+      slogan: 'Bingo is just the excuse —<br>real conversations start with every answer',
+      button: 'Try the demo ▶',
+      features: ['Tailored Questions','Voice to Text','Mini Games','Multilingual','Community','Game History']
+    }
+  };
+  // Embed context: 'app' (talkbingo.app, download is the end) | 'company' (cammuplabs.com, allow going back).
+  // From ?ctx= query (prototype) or a pre-set window.__TB_CTX (embed script can set it from data-ctx).
+  window.__TB_CTX = (new URLSearchParams(location.search).get('ctx')) || window.__TB_CTX || 'app';
+  function tbDemoBack(){
+    var ctx = window.__TB_CTX || 'app';
+    // inapp: deep-link back into the TalkBingo app (OS dismisses the in-app
+    // browser and brings the app to the foreground / home screen).
+    if (ctx === 'inapp') {
+      var ko = (window.__TB_LANG || 'ko') !== 'en';
+      var ctaP = document.querySelector('#cta p');
+
+      // If the OS actually switches apps, this page becomes hidden — cancel
+      // the fallback message in that case.
+      var fallbackTimer = setTimeout(function(){
+        if (ctaP) {
+          ctaP.innerHTML = ko
+            ? '상단의 <strong>✕</strong> 버튼을 눌러<br>앱으로 돌아가세요'
+            : 'Tap the <strong>✕</strong> button above<br>to return to the app';
+        }
+      }, 1500);
+      var onHide = function(){
+        if (document.hidden) {
+          clearTimeout(fallbackTimer);
+          document.removeEventListener('visibilitychange', onHide);
+        }
+      };
+      document.addEventListener('visibilitychange', onHide);
+
+      // Triple-try: window.close() (rarely works in SFSafariViewController),
+      // direct navigation, and a hidden iframe — some iOS contexts respect
+      // an iframe src when the top-frame redirect is silently blocked.
+      try { window.close(); } catch(_) {}
+      try { window.location.href = 'talkbingo://home'; } catch(_) {}
+      setTimeout(function(){
+        try {
+          var ifr = document.createElement('iframe');
+          ifr.src = 'talkbingo://home';
+          ifr.style.cssText = 'width:0;height:0;border:0;position:absolute;left:-9999px';
+          document.body.appendChild(ifr);
+          setTimeout(function(){ try { ifr.parentNode.removeChild(ifr); } catch(_) {} }, 600);
+        } catch(_) {}
+      }, 80);
+      return;
+    }
+    // company: go to cammuplabs.com (제품 소개)
+    if (ctx === 'company') {
+      window.location.href = 'https://cammuplabs.com/products.html';
+      return;
+    }
+    if (typeof window.__TB_ON_BACK === 'function') window.__TB_ON_BACK();
+    else history.back();
+  }
+
+  // Desktop: zoom the two-board row to fit. Mobile: zoom each board to its ~86vw card.
+  let TB_CONTENT_W = 0;
+  function tbFit(){
+    const root = document.documentElement;
+    // Fit each board card by BOTH width (86vw / 390) and height (viewport − chrome / 844 frame),
+    // so the whole board shows without the bottom getting cut off.
+    var wFit = (window.innerWidth * 0.86 - 6) / 390;
+    var hFit = (window.innerHeight - 90) / 844;
+    root.style.setProperty('--cardz', String(Math.max(0.4, Math.min(1, wFit, hFit))));
+    if (TB_CONTENT_W) root.style.setProperty('--z', String(Math.max(0.2, Math.min(1, (window.innerWidth - 8) / TB_CONTENT_W))));
+  }
+  function tbMeasure(){ const b = document.querySelector('.boards'); if (b && !TB_CONTENT_W){ document.documentElement.style.setProperty('--z','1'); TB_CONTENT_W = b.scrollWidth; } tbFit(); }
+  window.addEventListener('resize', tbFit);
+  setInterval(tbMeasure, 500);
+  tbFit();
+
+  let introLang = 'ko';
+  function renderIntro(){
+    const d = INTRO_I18N[introLang];
+    document.getElementById('introSlogan').innerHTML = d.slogan;
+    document.getElementById('introBtn').textContent = d.button;
+    document.getElementById('introFeatures').innerHTML = d.features.map(f => '<span>'+f+'</span>').join('');
+    document.querySelectorAll('#langToggle button').forEach(b => b.classList.toggle('on', b.dataset.lang === introLang));
+  }
+  function enterDemo(){ if(window.__setDemoLang) window.__setDemoLang(introLang); document.getElementById('intro').classList.add('hide'); }
+  document.querySelectorAll('#langToggle button').forEach(b => b.addEventListener('click', () => {
+    introLang = b.dataset.lang; renderIntro(); if(window.__setDemoLang) window.__setDemoLang(introLang);
+  }));
+  renderIntro();
+
+  const TWEAK_DEFAULTS = { pressDepth:10, speed:100, particlesOn:true, keyboardOn:false, lang:'ko', hostName:'YOU', guestName:'친구' };
+  // humorous bot answer pool (guest)
+  window.__BOT_ANSWERS = ['안 막힌 도로 😮‍💨','어제의 나','떡볶이…','월요일 빼고 다','로또 1등','고양이 손'];
+</script>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.production.min.js" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js" crossorigin="anonymous"></script>
+<script src="questions.js"></script>
+<script src="bundle.js"></script>
+</body>
+</html>
