@@ -4395,6 +4395,9 @@ function DemoApp() {
   useEffect(() => {
     window.__setDemoLang = (l) => setTweak("lang", l);
   }, []);
+  useEffect(() => {
+    window.__TB_LANG = t.lang;
+  }, [t.lang]);
   const botChatReplied = useRef(null);
   useEffect(() => {
     const onChat = () => {

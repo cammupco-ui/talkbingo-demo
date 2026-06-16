@@ -230,11 +230,43 @@
   window.__TB_CTX = (new URLSearchParams(location.search).get('ctx')) || window.__TB_CTX || 'app';
   function tbDemoBack(){
     var ctx = window.__TB_CTX || 'app';
-    // inapp: deep-link back into the TalkBingo app (OS dismisses the in-app browser
-    // and brings the app to the foreground / home screen).
+    // inapp: deep-link back into the TalkBingo app (OS dismisses the in-app
+    // browser and brings the app to the foreground / home screen).
     if (ctx === 'inapp') {
+      var ko = (window.__TB_LANG || 'ko') !== 'en';
+      var ctaP = document.querySelector('#cta p');
+
+      // If the OS actually switches apps, this page becomes hidden — cancel
+      // the fallback message in that case.
+      var fallbackTimer = setTimeout(function(){
+        if (ctaP) {
+          ctaP.innerHTML = ko
+            ? '상단의 <strong>✕</strong> 버튼을 눌러<br>앱으로 돌아가세요'
+            : 'Tap the <strong>✕</strong> button above<br>to return to the app';
+        }
+      }, 1500);
+      var onHide = function(){
+        if (document.hidden) {
+          clearTimeout(fallbackTimer);
+          document.removeEventListener('visibilitychange', onHide);
+        }
+      };
+      document.addEventListener('visibilitychange', onHide);
+
+      // Triple-try: window.close() (rarely works in SFSafariViewController),
+      // direct navigation, and a hidden iframe — some iOS contexts respect
+      // an iframe src when the top-frame redirect is silently blocked.
       try { window.close(); } catch(_) {}
-      window.location.href = 'talkbingo://home';
+      try { window.location.href = 'talkbingo://home'; } catch(_) {}
+      setTimeout(function(){
+        try {
+          var ifr = document.createElement('iframe');
+          ifr.src = 'talkbingo://home';
+          ifr.style.cssText = 'width:0;height:0;border:0;position:absolute;left:-9999px';
+          document.body.appendChild(ifr);
+          setTimeout(function(){ try { ifr.parentNode.removeChild(ifr); } catch(_) {} }, 600);
+        } catch(_) {}
+      }, 80);
       return;
     }
     // company: go to cammuplabs.com (제품 소개)
