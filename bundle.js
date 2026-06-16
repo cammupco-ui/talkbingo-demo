@@ -3349,7 +3349,10 @@ function ChatTicker({ role, panel, onTogglePanel, unread = 0, rewardReady = fals
       onTogglePanel == null ? void 0 : onTogglePanel();
     }
   };
-  if (!bounds || gameOver) return /* @__PURE__ */ React.createElement("div", { ref: tickerRef, style: { display: "none" } });
+  // Demo build — chat ticker hidden to keep the learning flow uncluttered.
+  // (Original gate: !bounds || gameOver. Restore by removing `true ||` to
+  //  bring the floating bubble back if the demo gets more advanced.)
+  if (true || !bounds || gameOver) return /* @__PURE__ */ React.createElement("div", { ref: tickerRef, style: { display: "none" } });
   const isChatPanel = panel === 1;
   const isRewardPanel = panel === 2;
   const icon = isChatPanel ? /* @__PURE__ */ React.createElement("svg", { width: "20", height: "20", viewBox: "0 0 24 24", fill: "white" }, /* @__PURE__ */ React.createElement("rect", { x: "3", y: "3", width: "7", height: "7", rx: "1.5" }), /* @__PURE__ */ React.createElement("rect", { x: "14", y: "3", width: "7", height: "7", rx: "1.5" }), /* @__PURE__ */ React.createElement("rect", { x: "3", y: "14", width: "7", height: "7", rx: "1.5" }), /* @__PURE__ */ React.createElement("rect", { x: "14", y: "14", width: "7", height: "7", rx: "1.5" })) : isRewardPanel ? /* @__PURE__ */ React.createElement("svg", { width: "20", height: "20", viewBox: "0 0 24 24", fill: "white" }, /* @__PURE__ */ React.createElement("path", { d: "M20 2H4a2 2 0 00-2 2v18l4-4h14a2 2 0 002-2V4a2 2 0 00-2-2z" })) : /* @__PURE__ */ React.createElement("svg", { width: "20", height: "20", viewBox: "0 0 24 24", fill: "white" }, /* @__PURE__ */ React.createElement("path", { d: "M20 2H4a2 2 0 00-2 2v18l4-4h14a2 2 0 002-2V4a2 2 0 00-2-2z" }));
