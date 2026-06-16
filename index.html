@@ -3,6 +3,23 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<script>
+  // Invite-link bypass: when someone receives the share URL inside a
+  // messenger's in-app browser (KakaoTalk/Line/WhatsApp/Telegram/etc.),
+  // App Link / Universal Link verification doesn't fire and we'd just
+  // show the demo page. Detect ?code= and hand off to /invite/ which
+  // attempts the custom scheme (talkbingo://) — that one IS forwarded
+  // to the OS by every in-app browser.
+  (function () {
+    try {
+      var params = new URLSearchParams(location.search);
+      var code = (params.get('code') || '').trim().toUpperCase();
+      if (code && /^[A-Z0-9]{4,8}$/.test(code)) {
+        location.replace('/invite/?code=' + encodeURIComponent(code));
+      }
+    } catch (_) { /* fall through to demo */ }
+  })();
+</script>
 <title>TalkBingo — 진실·밸런스로 채우는 대화형 빙고 데모</title>
 <meta name="description" content="빙고는 핑계일 뿐 — 모든 답에서 진짜 대화가 시작돼요. 봇과 한 판 해보고, 진짜 친구와는 앱에서. 맞춤 질문·음성→텍스트·미니게임·다국어·커뮤니티·게임 기록." />
 <meta property="og:title" content="TALKBINGO — 대화형 빙고" />
