@@ -165,10 +165,31 @@
   #intro p.slogan{color:#FF5CA1;font-weight:700;font-size:clamp(13px,3.6vw,16px);line-height:1.5;text-align:center;
     letter-spacing:.01em;margin:0;animation:introUp .55s ease .5s both;}
   #intro .features{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;
-    width:min(560px,92vw);margin-top:28px;animation:introUp .55s ease .9s both;}
+    width:min(560px,92vw);margin-top:28px;animation:introUp .55s ease .9s both;
+    position:relative;}
   #intro .features span{display:flex;align-items:center;justify-content:center;text-align:center;
     font-size:12px;color:#A89DB8;padding:14px 12px;border-radius:24px;
-    background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);white-space:nowrap;}
+    background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);white-space:nowrap;
+    cursor:pointer;transition:background .18s ease, border-color .18s ease, color .18s ease;}
+  #intro .features span:hover{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.22);color:#fff;}
+  #intro .features span.on{background:linear-gradient(135deg,rgba(189,5,88,.55),rgba(255,0,119,.45));
+    border-color:rgba(255,0,119,.55);color:#fff;}
+  /* Feature info — absolutely positioned inside .features so it covers
+     exactly the 6-chip area (Hub V4 expanded-slot pattern). No backdrop;
+     outside-click is handled in JS. */
+  #intro .features .fInfo{position:absolute;inset:0;display:none;
+    background:#1A0A2E;border:1px solid rgba(255,0,119,.4);border-radius:18px;
+    padding:18px 20px;box-shadow:0 18px 40px rgba(0,0,0,.55);
+    flex-direction:column;justify-content:center;text-align:left;z-index:5;
+    animation:introUp .22s ease both;}
+  #intro .features .fInfo.on{display:flex;}
+  #intro .features .fInfo h3{margin:0 0 6px;font-family:'EliceDigitalBaeum',sans-serif;
+    font-size:14px;font-weight:800;color:#FF5CA1;letter-spacing:.01em;}
+  #intro .features .fInfo p{margin:0;font-size:12.5px;line-height:1.5;color:#E6DDF0;
+    font-family:'EliceDigitalBaeum',sans-serif;}
+  #intro .features .fInfo .fClose{position:absolute;top:8px;right:10px;background:none;border:0;
+    color:rgba(255,255,255,.55);font-size:18px;cursor:pointer;line-height:1;padding:4px;}
+  #intro .features .fInfo .fClose:hover{color:#fff;}
   @media (max-width:560px){
     #intro{gap:10px;padding:32px 18px;}
     #intro .logo{width:54px;height:54px;}
@@ -177,6 +198,9 @@
     #intro .introBtn{margin-top:clamp(40px,7vh,84px);padding:14px 30px;font-size:15px;}
     #intro .features{grid-template-columns:repeat(2,1fr);gap:8px;margin-top:20px;}
     #intro .features span{padding:11px 10px;font-size:11.5px;}
+    #intro .features .fInfo{padding:14px 16px;border-radius:14px;}
+    #intro .features .fInfo h3{font-size:13px;margin-bottom:4px;}
+    #intro .features .fInfo p{font-size:12px;line-height:1.45;}
   }
   #intro .introBtn{border:0;cursor:pointer;color:#fff;font-weight:800;font-size:clamp(15px,4.2vw,17px);
     margin-top:clamp(80px,15vh,150px);font-family:'EliceDigitalBaeum',sans-serif;
@@ -234,12 +258,26 @@
     ko: {
       slogan: '빙고는 핑계일 뿐 —<br>모든 답에서 진짜 대화가 시작돼요',
       button: '체험하러 가기 ▶',
-      features: ['맞춤 질문','음성 → 텍스트','미니게임','다국어','커뮤니티','게임 기록']
+      features: [
+        ['맞춤 질문',     'AI가 두 사람의 관계·나이·성별을 살펴 진짜 궁금해할 질문만 골라줘요.'],
+        ['음성 → 텍스트', '답하기 귀찮을 땐 말로! 자동으로 텍스트로 바뀌어 대화가 끊기지 않아요.'],
+        ['미니게임',     '빙고 칸 안에 도전 미니게임이 숨어 있어, 누구든 빙고 라인을 만들 수 있어요.'],
+        ['다국어',       '한국어·영어를 자유롭게 오가며 글로벌 친구·연인과도 같은 게임을 즐겨요.'],
+        ['커뮤니티',     '게임이 끝나면 다른 사용자들의 익명 답변·반응을 둘러보며 공감대를 넓혀요.'],
+        ['게임 기록',     '친구별 게임 히스토리와 채팅이 자동 보관, 언제든 추억으로 돌아갈 수 있어요.']
+      ]
     },
     en: {
       slogan: 'Bingo is just the excuse —<br>real conversations start with every answer',
       button: 'Try the demo ▶',
-      features: ['Tailored Questions','Voice to Text','Mini Games','Multilingual','Community','Game History']
+      features: [
+        ['Tailored Questions', "AI picks questions based on each player's relationship, age, and gender."],
+        ['Voice to Text',      'Speak your answer — it gets transcribed instantly so the chat keeps flowing.'],
+        ['Mini Games',         'Hidden skill challenges inside bingo cells let anyone clear a line.'],
+        ['Multilingual',       'Switch between Korean and English freely to play with friends abroad.'],
+        ['Community',          'Browse anonymous answers and reactions from other players after each game.'],
+        ['Game History',       'Per-friend chat history is auto-saved — revisit your memories anytime.']
+      ]
     }
   };
   // Embed context: 'app' (talkbingo.app, download is the end) | 'company' (cammuplabs.com, allow going back).
@@ -316,8 +354,63 @@
     const d = INTRO_I18N[introLang];
     document.getElementById('introSlogan').innerHTML = d.slogan;
     document.getElementById('introBtn').textContent = d.button;
-    document.getElementById('introFeatures').innerHTML = d.features.map(f => '<span>'+f+'</span>').join('');
+    // Render chips + the overlay container in one shot. data-i indexes the
+    // feature pair so we can swap the overlay text without re-rendering.
+    const chips = d.features.map((f, i) =>
+      '<span data-i="'+i+'">'+f[0]+'</span>'
+    ).join('');
+    const overlay =
+      '<div class="fInfo" id="fInfo">' +
+        '<button class="fClose" aria-label="close">×</button>' +
+        '<h3 id="fInfoTitle"></h3>' +
+        '<p id="fInfoBody"></p>' +
+      '</div>';
+    document.getElementById('introFeatures').innerHTML = chips + overlay;
     document.querySelectorAll('#langToggle button').forEach(b => b.classList.toggle('on', b.dataset.lang === introLang));
+    bindFeatureChips();
+  }
+
+  // Feature-chip → overlay wiring. Tapping any chip slides the same overlay
+  // into the 6-chip area with that chip's title/body. Tapping another chip
+  // swaps the content; tapping the X or anywhere outside .features closes.
+  function bindFeatureChips(){
+    const wrap = document.querySelector('#intro .features');
+    if (!wrap) return;
+    const info  = wrap.querySelector('#fInfo');
+    const title = wrap.querySelector('#fInfoTitle');
+    const body  = wrap.querySelector('#fInfoBody');
+    const closeBtn = wrap.querySelector('.fClose');
+    function openInfo(i){
+      const f = INTRO_I18N[introLang].features[i];
+      if (!f) return;
+      title.textContent = f[0];
+      body.textContent  = f[1];
+      info.classList.add('on');
+      wrap.querySelectorAll('span').forEach((s, k) => s.classList.toggle('on', k === i));
+    }
+    function closeInfo(){
+      info.classList.remove('on');
+      wrap.querySelectorAll('span').forEach(s => s.classList.remove('on'));
+    }
+    wrap.querySelectorAll('span').forEach(s => {
+      s.addEventListener('click', (e) => {
+        e.stopPropagation();
+        openInfo(parseInt(s.dataset.i, 10));
+      });
+    });
+    closeBtn.addEventListener('click', (e) => { e.stopPropagation(); closeInfo(); });
+    // Outside-click closes — registered once via .__fHandlerSet flag so
+    // re-renders (language toggle) don't pile listeners up on document.
+    if (!document.__fHandlerSet){
+      document.addEventListener('click', (e) => {
+        const w = document.querySelector('#intro .features');
+        if (w && !w.contains(e.target)){
+          w.querySelector('#fInfo')?.classList.remove('on');
+          w.querySelectorAll('span').forEach(s => s.classList.remove('on'));
+        }
+      });
+      document.__fHandlerSet = true;
+    }
   }
   function enterDemo(){ if(window.__setDemoLang) window.__setDemoLang(introLang); document.getElementById('intro').classList.add('hide'); }
   document.querySelectorAll('#langToggle button').forEach(b => b.addEventListener('click', () => {
