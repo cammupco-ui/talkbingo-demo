@@ -213,6 +213,18 @@
     padding:clamp(15px,4vw,18px) clamp(30px,9vw,42px);border-radius:40px;white-space:nowrap;
     background:linear-gradient(135deg,#BD0558,#FF0077);box-shadow:0 12px 30px rgba(189,5,88,.55);
     animation:introUp .55s ease .72s both, turnPillPulse 2.4s ease-in-out 1.6s infinite;}
+  /* Demo info toast — fires from bundle.js when a feature is disabled in
+     the demo (mini-games on cell attacks and locked cells). Bottom-center,
+     auto-fades after ~3.2s. */
+  #tbToast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 30px);
+    transform:translate(-50%,30px);max-width:min(340px,86vw);
+    background:#1A0A2E;border:1px solid rgba(255,0,119,.35);border-radius:14px;
+    padding:14px 18px;color:#fff;font-family:'EliceDigitalBaeum',sans-serif;
+    font-size:13.5px;line-height:1.45;text-align:center;
+    box-shadow:0 18px 44px rgba(0,0,0,.55);opacity:0;pointer-events:none;
+    transition:opacity .25s ease, transform .35s cubic-bezier(.34,1.2,.5,1);
+    z-index:9998;}
+  #tbToast.on{opacity:1;transform:translate(-50%,0);}
   /* CTA overlay */
   #cta{position:fixed;inset:0;z-index:9999;display:none;align-items:center;justify-content:center;
     background:rgba(6,1,15,.78);backdrop-filter:blur(6px);}
@@ -250,6 +262,8 @@
   <div class="features" id="introFeatures"></div>
 </div>
 
+<div id="tbToast"></div>
+
 <div id="cta"><div class="card">
   <h2>🎉 빙고!</h2>
   <p>게임 체험이 아쉬웠나요?<br/>더 다양한 서비스가 앱에 준비되어 있습니다.</p>
@@ -286,6 +300,27 @@
       ]
     }
   };
+  // Demo-disabled feature toast — bundle.js calls this when the user
+  // triggers a cell attack or taps a locked cell (mini-games are not
+  // playable in the demo). Auto-dismisses after ~3.2s.
+  let __tbToastTimer = null;
+  window.__tbDemoToast = function(isAttack, lang){
+    const el = document.getElementById('tbToast');
+    if (!el) return;
+    const ko = lang !== 'en';
+    const msg = isAttack
+      ? (ko
+          ? '셀 공격 미니게임은 실제 앱에서 즐길 수 있어요 💜'
+          : 'Cell-attack mini-games are available in the full app 💜')
+      : (ko
+          ? '잠긴 셀 미니게임은 실제 앱에서 즐길 수 있어요 💜'
+          : 'Locked-cell mini-games are available in the full app 💜');
+    el.textContent = msg;
+    el.classList.add('on');
+    clearTimeout(__tbToastTimer);
+    __tbToastTimer = setTimeout(() => el.classList.remove('on'), 3200);
+  };
+
   // Embed context: 'app' (talkbingo.app, download is the end) | 'company' (cammuplabs.com, allow going back).
   // From ?ctx= query (prototype) or a pre-set window.__TB_CTX (embed script can set it from data-ctx).
   window.__TB_CTX = (new URLSearchParams(location.search).get('ctx')) || window.__TB_CTX || 'app';

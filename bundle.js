@@ -2333,34 +2333,12 @@ function VariantJelly({ tweaks, setTweak, role, sharedCells, sharedModal, onReso
       setModal({ type, seed: r * 5 + c, ownerRole: role, key: `${r},${c}` });
     }
     if (action === "minigame") {
-      if (kind === "attack") {
-        setAttacksLeft((prev) => {
-          var _a3;
-          return { ...prev, [role]: Math.max(0, ((_a3 = prev[role]) != null ? _a3 : 2) - 1) };
-        });
-      }
-      const challengerRole = kind === "attack" ? role : cell.role;
-      const defenderRole = challengerRole === "host" ? "guest" : "host";
-      const gameKinds = ["arrow", "soccer", "balloon"];
-      const gameKind = gameKinds[Math.floor(Math.random() * gameKinds.length)];
-      const newMg = {
-        key: `${r},${c}`,
-        kind,
-        ownerRole: cell.role,
-        attackerRole: role,
-        phase: "p1_confirm",
-        gameKind,
-        p1Role: challengerRole,
-        p2Role: defenderRole,
-        p1Score: null,
-        p2Score: null,
-        winner: null,
-        // increment global play count; show ad every 3rd game
-        playCount: (((_b = sharedMinigame[0]) == null ? void 0 : _b.playCount) || 0) + 1
-      };
-      newMg.showAd = newMg.playCount % 3 === 0;
-      setMinigame(newMg);
-      sharedMinigame[1](newMg);
+      // Demo build — mini-games (cell attack + locked-cell unlock) are
+      // disabled and replaced with an info toast. Both the attack-counter
+      // decrement and the actual minigame state are skipped so the demo
+      // keeps a clean board, and the user is told where to find the real
+      // mini-games.
+      if (window.__tbDemoToast) window.__tbDemoToast(kind === "attack", lang);
     }
   };
   React.useEffect(() => {
