@@ -175,20 +175,26 @@
   #intro .features span.on{background:linear-gradient(135deg,rgba(189,5,88,.55),rgba(255,0,119,.45));
     border-color:rgba(255,0,119,.55);color:#fff;}
   /* Feature info — absolutely positioned inside .features so it covers
-     exactly the 6-chip area (Hub V4 expanded-slot pattern). No backdrop;
+     exactly the 6-chip area (Hub V4 expanded-slot pattern). JS sets
+     left/top/width/height so it can grow out of the tapped chip's
+     bounding box on open instead of just fading in. No backdrop;
      outside-click is handled in JS. */
-  #intro .features .fInfo{position:absolute;inset:0;display:none;
+  #intro .features .fInfo{position:absolute;left:0;top:0;width:100%;height:100%;
+    display:none;
     background:#1A0A2E;border:1px solid rgba(255,0,119,.4);border-radius:18px;
     padding:18px 20px;box-shadow:0 18px 40px rgba(0,0,0,.55);
     flex-direction:column;justify-content:center;text-align:left;z-index:5;
-    animation:introUp .22s ease both;}
+    overflow:hidden;box-sizing:border-box;}
   #intro .features .fInfo.on{display:flex;}
   #intro .features .fInfo h3{margin:0 0 6px;font-family:'EliceDigitalBaeum',sans-serif;
-    font-size:14px;font-weight:800;color:#FF5CA1;letter-spacing:.01em;}
+    font-size:14px;font-weight:800;color:#FF5CA1;letter-spacing:.01em;
+    transition:opacity .18s ease;}
   #intro .features .fInfo p{margin:0;font-size:12.5px;line-height:1.5;color:#E6DDF0;
-    font-family:'EliceDigitalBaeum',sans-serif;}
+    font-family:'EliceDigitalBaeum',sans-serif;
+    transition:opacity .18s ease;}
   #intro .features .fInfo .fClose{position:absolute;top:8px;right:10px;background:none;border:0;
-    color:rgba(255,255,255,.55);font-size:18px;cursor:pointer;line-height:1;padding:4px;}
+    color:rgba(255,255,255,.55);font-size:18px;cursor:pointer;line-height:1;padding:4px;
+    transition:opacity .18s ease;}
   #intro .features .fInfo .fClose:hover{color:#fff;}
   @media (max-width:560px){
     #intro{gap:10px;padding:32px 18px;}
@@ -370,9 +376,11 @@
     bindFeatureChips();
   }
 
-  // Feature-chip → overlay wiring. Tapping any chip slides the same overlay
-  // into the 6-chip area with that chip's title/body. Tapping another chip
-  // swaps the content; tapping the X or anywhere outside .features closes.
+  // Feature-chip → overlay wiring. On first tap the overlay starts at the
+  // tapped chip's bounding box and grows out to fill the 6-chip area
+  // (Hub V4 expand). While open, tapping another chip cross-fades the
+  // content (no shrink/regrow flicker). Same chip again, the X, or any
+  // outside-click closes and resets back to the chip-sized state.
   function bindFeatureChips(){
     const wrap = document.querySelector('#intro .features');
     if (!wrap) return;
@@ -380,22 +388,115 @@
     const title = wrap.querySelector('#fInfoTitle');
     const body  = wrap.querySelector('#fInfoBody');
     const closeBtn = wrap.querySelector('.fClose');
-    function openInfo(i){
-      const f = INTRO_I18N[introLang].features[i];
-      if (!f) return;
+    const GROW_MS = 320; // keep in sync with the transition we apply inline
+
+    function setContent(f){
       title.textContent = f[0];
       body.textContent  = f[1];
-      info.classList.add('on');
-      wrap.querySelectorAll('span').forEach((s, k) => s.classList.toggle('on', k === i));
     }
+
+    function growFromChip(chipEl){
+      const chipRect = chipEl.getBoundingClientRect();
+      const wrapRect = wrap.getBoundingClientRect();
+      const startX = chipRect.left - wrapRect.left;
+      const startY = chipRect.top  - wrapRect.top;
+      // Compute the END box from the union of all chips' rects — using
+      // `width: 100%` would collapse when the grid container's measured
+      // width is 0 (some browsers / preview viewports), but the chips
+      // themselves always lay out correctly so their union is a reliable
+      // target.
+      const chipsArr = wrap.querySelectorAll('span');
+      let minL = Infinity, minT = Infinity, maxR = -Infinity, maxB = -Infinity;
+      chipsArr.forEach(c => {
+        const r = c.getBoundingClientRect();
+        if (r.left   < minL) minL = r.left;
+        if (r.top    < minT) minT = r.top;
+        if (r.right  > maxR) maxR = r.right;
+        if (r.bottom > maxB) maxB = r.bottom;
+      });
+      const endX = minL - wrapRect.left;
+      const endY = minT - wrapRect.top;
+      const endW = maxR - minL;
+      const endH = maxB - minT;
+      // 1) Pin overlay to the chip's box with NO transition so it lands
+      //    there instantly.
+      info.style.transition = 'none';
+      info.style.left   = startX + 'px';
+      info.style.top    = startY + 'px';
+      info.style.width  = chipRect.width  + 'px';
+      info.style.height = chipRect.height + 'px';
+      info.style.opacity = '0.4';
+      title.style.opacity = '0';
+      body.style.opacity = '0';
+      closeBtn.style.opacity = '0';
+      info.classList.add('on');
+      // 2) Force layout, then animate to the full 6-chip box on the next
+      //    frame so the browser actually transitions the property change.
+      //    `setTimeout(_, 16)` instead of requestAnimationFrame so this
+      //    fires even when the tab is throttled (headless previews, etc.).
+      info.getBoundingClientRect();
+      setTimeout(() => {
+        info.style.transition =
+          'left '   + GROW_MS + 'ms cubic-bezier(.34,1.2,.5,1),' +
+          ' top '   + GROW_MS + 'ms cubic-bezier(.34,1.2,.5,1),' +
+          ' width ' + GROW_MS + 'ms cubic-bezier(.34,1.2,.5,1),' +
+          ' height '+ GROW_MS + 'ms cubic-bezier(.34,1.2,.5,1),' +
+          ' opacity 180ms ease';
+        info.style.left   = endX + 'px';
+        info.style.top    = endY + 'px';
+        info.style.width  = endW + 'px';
+        info.style.height = endH + 'px';
+        info.style.opacity = '1';
+        // Text/X fade in slightly after the box has grown.
+        setTimeout(() => {
+          title.style.opacity = '1';
+          body.style.opacity = '1';
+          closeBtn.style.opacity = '1';
+        }, Math.round(GROW_MS * 0.55));
+      }, 16);
+    }
+
+    function openInfo(i, chipEl){
+      const f = INTRO_I18N[introLang].features[i];
+      if (!f) return;
+      const alreadyOpen = info.classList.contains('on');
+      const sameChip = chipEl.classList.contains('on');
+      if (alreadyOpen && sameChip){
+        closeInfo();
+        return;
+      }
+      if (alreadyOpen){
+        // Cross-fade text only — overlay box is already at full size.
+        title.style.opacity = '0';
+        body.style.opacity  = '0';
+        setTimeout(() => {
+          setContent(f);
+          title.style.opacity = '1';
+          body.style.opacity  = '1';
+        }, 130);
+      } else {
+        setContent(f);
+        growFromChip(chipEl);
+      }
+      wrap.querySelectorAll('span').forEach(s => s.classList.toggle('on', s === chipEl));
+    }
+
     function closeInfo(){
+      if (!info.classList.contains('on')) return;
       info.classList.remove('on');
       wrap.querySelectorAll('span').forEach(s => s.classList.remove('on'));
+      // Note: we intentionally DO NOT clear inline styles here. growFromChip()
+      // overwrites every property on the next open, and clearing here was
+      // racing with the grow timeout (close fires for non-obvious reasons
+      // during the same tick on some browsers/headless previews, leaving the
+      // overlay stuck at the chip-sized start state). Leaving stale inline
+      // styles is harmless because display:none hides them.
     }
+
     wrap.querySelectorAll('span').forEach(s => {
       s.addEventListener('click', (e) => {
         e.stopPropagation();
-        openInfo(parseInt(s.dataset.i, 10));
+        openInfo(parseInt(s.dataset.i, 10), s);
       });
     });
     closeBtn.addEventListener('click', (e) => { e.stopPropagation(); closeInfo(); });
@@ -405,8 +506,11 @@
       document.addEventListener('click', (e) => {
         const w = document.querySelector('#intro .features');
         if (w && !w.contains(e.target)){
-          w.querySelector('#fInfo')?.classList.remove('on');
-          w.querySelectorAll('span').forEach(s => s.classList.remove('on'));
+          const f = w.querySelector('#fInfo');
+          if (f && f.classList.contains('on')){
+            f.classList.remove('on');
+            w.querySelectorAll('span').forEach(s => s.classList.remove('on'));
+          }
         }
       });
       document.__fHandlerSet = true;
