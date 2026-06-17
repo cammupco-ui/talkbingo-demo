@@ -300,26 +300,54 @@
       ]
     }
   };
-  // Demo-disabled feature toast — bundle.js calls this when the user
-  // triggers a cell attack or taps a locked cell (mini-games are not
-  // playable in the demo). Auto-dismisses after ~3.2s.
+  // Demo info toast — fired from bundle.js or this file when a feature
+  // is disabled / a hint should surface. `kind`:
+  //   - 'attack'  — cell-attack mini-game (disabled in demo)
+  //   - 'unlock'  — locked-cell mini-game (disabled in demo)
+  //   - 'chatTip' — gentle nudge to try the chat input mid-demo
+  //   - true / false  — legacy: true = 'attack', false = 'unlock'
+  // Auto-dismisses after ~3.2s.
   let __tbToastTimer = null;
-  window.__tbDemoToast = function(isAttack, lang){
+  window.__tbDemoToast = function(kind, lang){
     const el = document.getElementById('tbToast');
     if (!el) return;
     const ko = lang !== 'en';
-    const msg = isAttack
-      ? (ko
-          ? '셀 공격 미니게임은 실제 앱에서 즐길 수 있어요 💜'
-          : 'Cell-attack mini-games are available in the full app 💜')
-      : (ko
-          ? '잠긴 셀 미니게임은 실제 앱에서 즐길 수 있어요 💜'
-          : 'Locked-cell mini-games are available in the full app 💜');
+    // Normalize legacy boolean signature so old call sites stay valid.
+    if (kind === true)  kind = 'attack';
+    if (kind === false) kind = 'unlock';
+    let msg;
+    if (kind === 'attack'){
+      msg = ko
+        ? '셀 공격 미니게임은 실제 앱에서 즐길 수 있어요 💜'
+        : 'Cell-attack mini-games are available in the full app 💜';
+    } else if (kind === 'unlock'){
+      msg = ko
+        ? '잠긴 셀 미니게임은 실제 앱에서 즐길 수 있어요 💜'
+        : 'Locked-cell mini-games are available in the full app 💜';
+    } else if (kind === 'chatTip'){
+      msg = ko
+        ? '💬 하단 메시지 입력란에서 자유롭게 대화도 나눠보세요'
+        : '💬 Try the message bar below — chat freely with your partner';
+    } else {
+      return;
+    }
     el.textContent = msg;
     el.classList.add('on');
     clearTimeout(__tbToastTimer);
     __tbToastTimer = setTimeout(() => el.classList.remove('on'), 3200);
   };
+  // Schedule the chat-input nudge once per demo session, ~10s after the
+  // user enters the game (long enough to look around but before they
+  // wander off). enterDemo() calls scheduleChatTip.
+  let __tbChatTipScheduled = false;
+  function scheduleChatTip(){
+    if (__tbChatTipScheduled) return;
+    __tbChatTipScheduled = true;
+    setTimeout(() => {
+      const lang = (window.__tbCurrentLang || 'ko');
+      window.__tbDemoToast('chatTip', lang);
+    }, 10000);
+  }
 
   // Embed context: 'app' (talkbingo.app, download is the end) | 'company' (cammuplabs.com, allow going back).
   // From ?ctx= query (prototype) or a pre-set window.__TB_CTX (embed script can set it from data-ctx).
@@ -551,9 +579,17 @@
       document.__fHandlerSet = true;
     }
   }
-  function enterDemo(){ if(window.__setDemoLang) window.__setDemoLang(introLang); document.getElementById('intro').classList.add('hide'); }
+  function enterDemo(){
+    if(window.__setDemoLang) window.__setDemoLang(introLang);
+    document.getElementById('intro').classList.add('hide');
+    window.__tbCurrentLang = introLang;
+    scheduleChatTip();
+  }
   document.querySelectorAll('#langToggle button').forEach(b => b.addEventListener('click', () => {
-    introLang = b.dataset.lang; renderIntro(); if(window.__setDemoLang) window.__setDemoLang(introLang);
+    introLang = b.dataset.lang;
+    window.__tbCurrentLang = introLang;
+    renderIntro();
+    if(window.__setDemoLang) window.__setDemoLang(introLang);
   }));
   renderIntro();
 
